@@ -1,0 +1,3153 @@
+<!doctype html>
+<html lang="ko"><head>
+  
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoLab — Explore. Analyze. Innovate.</title>
+  <meta name="description" content="Explore. Analyze. Innovate. AI 기반 환경 과학·데이터 분석 및 친환경 소재 탐구 플랫폼">
+  <meta property="og:title" content="EcoLab — Explore. Analyze. Innovate.">
+  <meta property="og:description" content="Explore. Analyze. Innovate. AI 기반 환경 과학·데이터 분석 및 친환경 소재 탐구 플랫폼">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas: #F6F8F7;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F1F5F3;
+      --bg-obsidian: #0B0F0E;
+      --bg-forest: #0B1F17;
+      --accent-green: #064E3B;
+      --accent-green-hover: #053D2E;
+      --accent-emerald: #10B981;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #64748B;
+      --border-hairline: #E2E8F0;
+      --amber-bg: #FFFBEB;
+      --amber-border: #FCD34D;
+      --amber-text: #78350F;
+      --red-bg: #FEF2F2;
+      --red-border: #FECACA;
+      --red-text: #991B1B;
+      --font-sans: "Pretendard", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-display: "Plus Jakarta Sans", "Pretendard", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { font-family: var(--font-sans); scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+    h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); }
+    p { margin: 0; }
+    button, input, select, textarea { font-family: inherit; }
+    button { cursor: pointer; }
+    .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+    /* Layout Shell */
+    .app-shell { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 256px;
+      background: var(--bg-obsidian);
+      color: #fff;
+      position: fixed;
+      inset: 0 auto 0 0;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      z-index: 30;
+    }
+    .sidebar-brand {
+      padding: 22px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-brand button {
+      background: none;
+      border: none;
+      padding: 0;
+      text-align: left;
+      color: #fff;
+    }
+    .brand-title { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; display: block; }
+    .brand-slogan { font-size: 12px; color: #6EE7B7; margin-top: 3px; display: block; }
+
+    .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: transparent;
+      color: #CBD5E1;
+      text-align: left;
+      transition: background 150ms ease, color 150ms ease;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .nav-btn.active { background: var(--accent-green); color: #fff; }
+    .nav-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .nav-label-ko { display: block; font-size: 13.5px; font-weight: 500; line-height: 1.25; }
+    .nav-label-en { display: block; font-size: 11px; color: #94A3B8; margin-top: 2px; }
+    .nav-btn.active .nav-label-en { color: #A7F3D0; }
+    .nav-count { margin-left: auto; font-size: 12px; color: #6EE7B7; }
+
+    .sidebar-context {
+      padding: 16px;
+      background: #070A09;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      color: #94A3B8;
+    }
+    .sidebar-context-title { font-weight: 600; color: #E2E8F0; margin-bottom: 8px; }
+    .sidebar-context-row { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
+    .sidebar-context-row span { color: #F1F5F9; }
+
+    .main-wrap {
+      flex: 1;
+      margin-left: 256px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: 56px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-hairline);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border-hairline);
+      border-radius: 6px;
+      padding: 6px 8px;
+      color: var(--text-primary);
+    }
+    .topbar-title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar-sub { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+    .content-area {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 28px 24px 48px;
+    }
+
+    /* Buttons & Inputs */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+    .btn-primary { background: var(--accent-green); color: #fff; }
+    .btn-primary:hover { background: var(--accent-green-hover); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-emerald { background: var(--accent-emerald); color: #05261A; font-weight: 600; }
+    .btn-emerald:hover { background: #34D399; }
+    .btn-secondary { background: #fff; border-color: var(--border-hairline); color: var(--text-primary); }
+    .btn-secondary:hover { background: #F8FAFC; }
+    .btn-danger { background: #DC2626; color: #fff; }
+    .btn-danger:hover { background: #B91C1C; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    .input, .select, .textarea {
+      width: 100%;
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      background: #fff;
+      color: var(--text-primary);
+      padding: 8px 12px;
+      font-size: 13.5px;
+      outline: none;
+    }
+    .input:focus, .select:focus, .textarea:focus { border-color: var(--accent-green); }
+
+    /* Cards & Grids */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+    .section-gap { display: flex; flex-direction: column; gap: 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .grid-5 { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .split-layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start; }
+
+    /* Segmented Filter Controls */
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+    .filter-btn {
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: #F1F5F9;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .filter-btn:hover { background: #E2E8F0; }
+    .filter-btn.active { background: var(--accent-green); color: #fff; }
+
+    .segmented {
+      display: inline-flex;
+      background: #F1F5F9;
+      padding: 3px;
+      border-radius: var(--radius-md);
+      gap: 2px;
+    }
+    .seg-btn {
+      border: none;
+      background: transparent;
+      color: #475569;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .seg-btn.active { background: #fff; color: #0F172A; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+
+    /* Banners */
+    .banner {
+      border-radius: var(--radius-lg);
+      padding: 12px 16px;
+      font-size: 12.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .banner-verified { background: #ECFDF5; border: 1px solid #A7F3D0; color: #064E3B; }
+    .banner-demo { background: var(--amber-bg); border: 1px solid var(--amber-border); color: var(--amber-text); }
+    .banner-error { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red-text); }
+
+    /* Hero */
+    .hero-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; align-items: stretch; }
+    .hero-main {
+      background: var(--bg-forest);
+      color: #fff;
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid #064E3B;
+    }
+    .hero-title { font-size: clamp(24px, 3vw, 34px); font-weight: 700; line-height: 1.25; margin-top: 10px; text-wrap: balance; }
+    .hero-desc { margin-top: 14px; font-size: 14.5px; color: #CBD5E1; line-height: 1.65; max-width: 58ch; }
+    .hero-form { margin-top: 24px; display: flex; gap: 10px; }
+    .hero-input {
+      flex: 1;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 13.5px;
+      outline: none;
+    }
+    .hero-input::placeholder { color: #94A3B8; }
+    .hero-input:focus { border-color: #34D399; }
+    .hero-visual {
+      background: var(--bg-forest);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-hairline);
+      overflow: hidden;
+      position: relative;
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .hero-visual svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .hero-visual-caption {
+      position: relative;
+      z-index: 2;
+      padding: 18px 20px;
+      background: linear-gradient(to top, rgba(7,15,12,0.92), rgba(7,15,12,0.35), transparent);
+      color: #fff;
+    }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border-hairline); border-radius: var(--radius-lg); background: #fff; }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left; }
+    th { background: #F8FAFC; color: #475569; font-weight: 600; padding: 11px 14px; border-bottom: 1px solid var(--border-hairline); }
+    td { padding: 11px 14px; border-bottom: 1px solid #F1F5F9; vertical-align: top; color: #1E293B; }
+    tr:last-child td { border-bottom: none; }
+
+    /* List Item Selection */
+    .list-item {
+      width: 100%;
+      text-align: left;
+      background: #fff;
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      transition: border-color 150ms ease, background 150ms ease;
+    }
+    .list-item:hover { border-color: var(--accent-green); }
+    .list-item.active { background: var(--bg-forest); border-color: var(--accent-green); color: #fff; }
+    .list-item.active .meta-text { color: #6EE7B7; }
+    .list-item.active .sub-text { color: #CBD5E1; }
+
+    .meta-text { font-size: 11.5px; color: var(--text-muted); }
+    .sub-text { font-size: 12.5px; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; }
+
+    /* Material Cards & Floating Tray */
+    .mat-visual { aspect-ratio: 4/3; background: #0B1F17; border-bottom: 1px solid var(--border-hairline); overflow: hidden; }
+    .mat-visual svg { width: 100%; height: 100%; display: block; }
+    .compare-tray {
+      position: sticky;
+      bottom: 16px;
+      z-index: 25;
+      background: var(--bg-forest);
+      color: #fff;
+      border: 1px solid #065F46;
+      border-radius: var(--radius-lg);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+    }
+
+    /* Modals & Drawers */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(0,0,0,0.52);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      width: 100%;
+      max-width: 500px;
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-hairline);
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(0,0,0,0.52);
+      display: flex;
+      justify-content: flex-end;
+    }
+    .drawer-panel {
+      width: 100%;
+      max-width: 660px;
+      height: 100%;
+      background: #fff;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: -12px 0 32px rgba(0,0,0,0.18);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 70;
+      background: var(--bg-forest);
+      color: #fff;
+      border: 1px solid #065F46;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile Bottom Bar */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: #fff;
+      border-top: 1px solid var(--border-hairline);
+      z-index: 40;
+      grid-template-columns: repeat(5, 1fr);
+    }
+    .mobile-tab {
+      border: none;
+      background: transparent;
+      color: #64748B;
+      font-size: 11px;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      min-height: 44px;
+    }
+    .mobile-tab.active { color: var(--accent-green); font-weight: 600; }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 1080px) {
+      .grid-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero-grid { grid-template-columns: 1fr; }
+      .split-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .sidebar.mobile-open { display: flex; width: 270px; box-shadow: 12px 0 32px rgba(0,0,0,0.35); }
+      .main-wrap { margin-left: 0; padding-bottom: 64px; }
+      .mobile-menu-btn { display: inline-flex; }
+      .mobile-bottom-nav { display: grid; }
+      .grid-3, .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+      .hero-form { flex-direction: column; }
+      .content-area { padding: 18px 14px 36px; }
+      .topbar { padding: 0 14px; }
+      .compare-tray { bottom: 64px; }
+      .toast { bottom: 68px; right: 14px; left: 14px; }
+    }
+  </style>
+<script src="/_aistudio-iframe.js?v=29045eb3"></script><script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@2.0.4"></script><style>.aistudio-hover-highlight { box-shadow: inset 0 0 0 0.5px white, inset 0 0 0 1.5px rgba(128,128,128,0.6) !important; }.aistudio-active-highlight { outline: 2px solid #87a9ff !important; outline-offset: -2px !important; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.3), inset 0 0 0 0.5px rgba(0,0,0,0.3) !important; }.aistudio-generating-blur { filter: blur(5px) grayscale(100%) brightness(28%) !important; transition: filter 0.3s ease; }#aistudio-focus-mode-tag { position: absolute; display: none; align-items: center; gap: 4px; background: #87a9ff; border-radius: 12px; z-index: 10000; padding: 8px; color: #32302c; font-family: Inter, sans-serif; font-size: 14px; font-style: normal; font-weight: 500; line-height: 21px; pointer-events: none; }#aistudio-hover-mode-tag { position: absolute; display: none; align-items: center; gap: 4px; background: rgba(128,128,128,0.6); border-radius: 12px; z-index: 10000; padding: 8px; color: white; font-family: Inter, sans-serif; font-size: 14px; font-style: normal; font-weight: 500; line-height: 21px; pointer-events: none; }.aistudio-img-icon { display: none; vertical-align: middle; pointer-events: auto; cursor: pointer; }.aistudio-img-icon.visible { display: inline-flex; }#aistudio-focus-mode-tag .aistudio-img-icon { position: relative; width: 26px; height: 26px; background: #32302c; border-radius: 6px; margin: -4px -4px -4px 0; }#aistudio-focus-mode-tag .aistudio-img-icon::before { content: ""; position: absolute; top: 4px; left: 4px; width: 18px; height: 18px; background-color: white; -webkit-mask-image: url("https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/edit_fix_auto/default/24px.svg"); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; mask-image: url("https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/edit_fix_auto/default/24px.svg"); mask-size: contain; mask-repeat: no-repeat; }#aistudio-hover-mode-tag .aistudio-img-icon { position: relative; width: 18px; height: 18px; margin-left: 4px; }#aistudio-hover-mode-tag .aistudio-img-icon::before { content: ""; position: absolute; top: 0; left: 0; width: 18px; height: 18px; background-color: white; -webkit-mask-image: url("https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/edit_fix_auto/default/24px.svg"); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; mask-image: url("https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/edit_fix_auto/default/24px.svg"); mask-size: contain; mask-repeat: no-repeat; }#aistudio-focus-mode-tag .aistudio-img-icon:hover, #aistudio-hover-mode-tag .aistudio-img-icon:hover { background: #424242 !important; }#aistudio-focus-mode-tag .aistudio-img-icon:active, #aistudio-hover-mode-tag .aistudio-img-icon:active { background: #393f51 !important; }</style></head>
+<body>
+  <div class="app-shell">
+    <!-- Left Sidebar -->
+    <aside id="sidebar" class="sidebar" aria-label="주 메뉴">
+      <div class="sidebar-brand">
+        <button type="button" onclick="navigateTo('home')">
+          <span class="brand-title">EcoLab</span>
+          <span class="brand-slogan">Explore. Analyze. Innovate.</span>
+        </button>
+      </div>
+      <nav id="sidebar-nav" class="sidebar-nav"></nav>
+      <div id="sidebar-context" class="sidebar-context"></div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrap">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="메뉴 열기">☰</button>
+          <span id="topbar-title" class="topbar-title">홈 대시보드</span>
+          <span id="topbar-sub" class="topbar-sub">· Home</span>
+        </div>
+        <button type="button" id="topbar-cta" class="btn btn-primary btn-sm" onclick="handleTopbarAction()">AI 해결 연구실 열기</button>
+      </header>
+
+      <main id="app-content" class="content-area"></main>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav id="mobile-bottom-nav" class="mobile-bottom-nav" aria-label="모바일 빠른 이동"></nav>
+
+  <!-- Modal Containers -->
+  <div id="modal-root"></div>
+  <div id="drawer-root"></div>
+  <div id="toast-root"></div>
+
+  <script>
+    // =========================================================================
+    // 1. STATIC SCIENTIFIC DATA (ENVIRONMENT TOPICS, DATASETS, 6 ECO-MATERIALS)
+    // =========================================================================
+    const ENV_CATEGORY_LABELS = {
+      climate: '기후변화 및 온실가스',
+      air: '대기오염 및 미세먼지',
+      water: '수질오염 및 미세플라스틱',
+      waste: '폐기물 및 자원 순환',
+      energy: '에너지 문제'
+    };
+
+    const ENVIRONMENT_TOPICS = [
+      {
+        id: 'climate-greenhouse-warming',
+        category: 'climate',
+        title: '온실가스 증가와 지구 복사 평형 붕괴',
+        subtitle: '화석연료 연소와 산업 배출로 인한 대기 중 이산화탄소·메탄 농도 상승 및 에너지 불균형',
+        severityLabel: '장기 누적 위험',
+        conceptAndCauses:
+          '지구 대기는 태양으로부터 오는 단파 복사는 대부분 통과시키고, 지표가 방출하는 적외선 장파 복사의 일부를 흡수해 보온하는 온실효과를 가집니다. 산업혁명 이후 화석연료 연소, 시멘트 공정, 산림 훼손, 메탄 배출이 급증하면서 대기 중 온실가스 농도가 자연 변동 범위를 넘어섰고, 지구가 우주 공간으로 방출하는 에너지보다 흡수하는 에너지가 많아지는 복사 불균형이 발생하고 있습니다.',
+        scientificPrinciples: [
+          {
+            title: '적외선 분자 진동과 복사강제력 (Radiative Forcing)',
+            description: '이산화탄소(CO₂)와 메탄(CH₄) 같은 다원자 분자는 쌍극자 모멘트 변화를 동반하는 신축·굽힘 진동 모드를 가져 특정 파장대의 지구 적외선 복사를 흡수한 뒤 사방으로 재방출합니다.'
+          },
+          {
+            title: '탄소 순환 불균형과 해양 산성화',
+            description: '대기 중 과잉 CO₂의 약 25~30%는 해양에 용해되어 탄산(H₂CO₃)을 형성하고 수소 이온(H⁺) 농도를 높여 탄산칼슘(CaCO₃) 껍질을 만드는 해양 생물의 석회화를 저해합니다.'
+          },
+          {
+            title: '알베도 양의 피드백 (Ice-Albedo Feedback)',
+            description: '기온 상승으로 극지방 빙하와 눈 면적이 줄어들면 태양빛 반사율(알베도)이 낮아져 어두운 해수·지표가 더 많은 열을 흡수하게 되고 온난화가 가속됩니다.'
+          }
+        ],
+        ecologicalImpacts: [
+          '해수 열팽창과 빙상 융해로 인한 전 지구 해수면 상승 및 연안 침수 위험 증가',
+          '대기 수증기량 증가에 따른 극한 폭우, 폭염, 장기 가뭄 빈도 상승',
+          '고수온·산성화로 인한 산호초 백화 현상 및 해양 먹이사슬 교란',
+          '영구동토층 해빙으로 인한 추가 메탄·아산화질소 방출 가능성'
+        ],
+        currentTechnologies: [
+          { name: '직접 공기 포집(DAC) 및 탄소 포집·저장(CCS)', summary: '고체 다공성 흡착제나 아민 용액으로 대기·배가스 중 CO₂를 선택 분리해 지중 저장하거나 연료로 전환합니다.', stage: '상용 실증 단계' },
+          { name: '바이오차(Biochar) 기반 토양 탄소 격리', summary: '폐기 바이오매스를 무산소 열분해해 난분해성 탄소 구조로 전환한 뒤 토양에 고정합니다.', stage: '현장 보급 확대' }
+        ],
+        relatedMaterialIds: ['zeolite', 'biochar', 'activated-carbon'],
+        relatedDatasetIds: ['noaa-temp-anomaly', 'mauna-loa-co2'],
+        inquiryQuestions: [
+          '발전소 배가스와 대기 중(약 420 ppm)에서 CO₂를 포집할 때 요구되는 흡착제의 기공 크기와 재생 에너지 차이는 무엇일까요?',
+          '바이오차의 열분해 온도가 높아질수록 탄소 안정성과 비표면적은 어떻게 변할까요?'
+        ],
+        references: [
+          'IPCC AR6 종합보고서 — 온실가스 복사강제력 및 지구 지표 온도 변화 개념',
+          'NOAA Global Monitoring Laboratory — 대기 중 이산화탄소 농도 관측 체계'
+        ]
+      },
+      {
+        id: 'air-pm25-secondary',
+        category: 'air',
+        title: '초미세먼지(PM₂.₅)와 2차 대기 화학 생성',
+        subtitle: '질소산화물·황산화물·휘발성유기화합물의 광화학 반응을 통한 미세입자 형성과 저감 기술',
+        severityLabel: '인체·도시 대기 위협',
+        conceptAndCauses:
+          'PM₂.₅는 공기역학적 직경이 2.5 μm 이하인 극미세 입자상 물질입니다. 연소 과정에서 직접 배출되는 1차 입자뿐만 아니라, 자동차·발전소·산업 공정에서 배출된 NOₓ, SO₂, NH₃, VOCs가 대기 중에서 자외선 및 산화제(오존, OH 라디칼)와 반응해 황산암모늄·질산암모늄 등으로 전환되는 2차 생성 비중이 매우 큽니다.',
+        scientificPrinciples: [
+          {
+            title: '기체-입자 전환 (Gas-to-Particle Conversion)',
+            description: 'SO₂와 NO₂가 대기 중 OH 라디칼과 산화 반응해 황산(H₂SO₄)과 질산(HNO₃) 기체를 형성하고, 암모니아(NH₃)와 중화 반응하여 고체/액적 에어로졸 입자로 성장합니다.'
+          },
+          {
+            title: '물리 흡착(Physisorption) 및 모세관 응축',
+            description: '다공성 흡착제의 미세 기공 내부에서는 반데르발스 힘에 의해 VOCs 및 유해 가스가 포집되며, 기공 직경이 분자 크기에 가까울수록 포집 효율이 높아집니다.'
+          }
+        ],
+        ecologicalImpacts: [
+          '폐포 깊숙이 침투해 혈류로 유입됨으로써 호흡기 및 심혈관계 질환 유발',
+          '대기 시정 악화 및 지표 도달 태양광 산란으로 식물의 광합성 효율 저하',
+          '질산·황산 에어로졸 침적에 의한 토양 및 담수 산성화'
+        ],
+        currentTechnologies: [
+          { name: '선택적 촉매 환원법(SCR) 및 하이브리드 집진', summary: '배가스 내 NOₓ를 암모니아와 촉매 반응시켜 질소(N₂)와 물(H₂O)로 환원하고 미세입자를 여과합니다.', stage: '산업 표준 적용' },
+          { name: '제올라이트·활성탄 기반 VOCs 흡착 로터', summary: '저농도 휘발성유기화합물을 다공성 소재로 흡착 농축한 뒤 열풍 탈착·산화 처리합니다.', stage: '상용 적용 단계' }
+        ],
+        relatedMaterialIds: ['activated-carbon', 'zeolite', 'silica-gel'],
+        relatedDatasetIds: ['korea-pm25-trend', 'mauna-loa-co2'],
+        inquiryQuestions: [
+          '습도가 높은 날 활성탄의 VOCs 흡착 효율이 떨어지는 이유와 실리카겔·소수성 제올라이트의 보완 역할은 무엇일까요?',
+          '초미세먼지 저감을 위해 1차 먼지 여과 외에 전구물질(NOₓ, VOCs) 제어가 왜 중요할까요?'
+        ],
+        references: [
+          '환경부 대기환경연보 — 국내 PM₂.₅ 연평균 농도 추이 및 배출원 분류 기준',
+          'WHO 대기질 가이드라인 — 미세먼지 입경별 건강 영향 기준'
+        ]
+      },
+      {
+        id: 'water-microplastics',
+        category: 'water',
+        title: '수질오염과 미세플라스틱 흡착·생태 축적',
+        subtitle: '5mm 미만 합성고분자 입자의 수계 잔류, 유해물질 매개 및 다공성 정화 소재 탐구',
+        severityLabel: '수생태계 순환 오염',
+        conceptAndCauses:
+          '미세플라스틱(Microplastics)은 직경 5mm 미만의 플라스틱 입자로, 처음부터 작게 제조된 1차 미세플라스틱과 대형 폐플라스틱이 자외선 광분해·물리 마찰·세탁 섬유 탈락으로 쪼개진 2차 미세플라스틱으로 구분됩니다. 일반 하수처리장의 물리적 침전 공정만으로는 수~수백 마이크로미터 입자를 완전히 걸러내기 어렵습니다.',
+        scientificPrinciples: [
+          {
+            title: '소수성 상호작용과 유해물질 운반체(Vector) 효과',
+            description: '폴리에틸렌(PE)·폴리프로필렌(PP) 표면은 비극성(소수성)이어서 수중의 잔류성유기오염물질(POPs)이나 중금속을 표면에 농축한 채 생물 체내로 유입됩니다.'
+          },
+          {
+            title: '표면 전하 및 막 여과(Membrane Filtration)',
+            description: '산화그래핀(GO) 복합막이나 CNT 필터는 크기 배제(Size Exclusion)와 정전기적 반발력을 결합해 미세입자와 용존 오염물질을 동시에 분리합니다.'
+          }
+        ],
+        ecologicalImpacts: [
+          '플랑크톤·패류·어류의 소화관 폐색 및 영양 흡수 장애 유발',
+          '먹이사슬 상위 단계로 이동하며 생물 농축 및 플라스틱 첨가제 용출 위험 증가',
+          '수생 미생물 군집 변화 및 담수·연안 저질 오염 심화'
+        ],
+        currentTechnologies: [
+          { name: '다공성 탄소 흡착 및 응집-모래 여과 고도처리', summary: '입상 활성탄(GAC)이나 바이오차 여과층과 응집제를 병용해 미세섬유·입자 제거율을 높입니다.', stage: '고도처리·파일럿 실증' },
+          { name: '나노탄소 복합 분리막 (UF/NF Membrane)', summary: '그래핀 또는 CNT를 고분자 막에 복합화해 수투과도를 유지하면서 초미세 입자를 차단합니다.', stage: '연구·중규모 테스트' }
+        ],
+        relatedMaterialIds: ['activated-carbon', 'biochar', 'graphene', 'cnt'],
+        relatedDatasetIds: ['coastal-microplastics-demo', 'noaa-temp-anomaly'],
+        inquiryQuestions: [
+          '소규모 정수 처리 시설에서는 그래핀 분리막보다 바이오차·활성탄 여과층이 먼저 검토되는 공학적·경제적 이유는 무엇일까요?',
+          '수중 미세플라스틱의 크기(100 μm vs 1 μm)에 따라 체거름과 표면 흡착 중 어떤 메커니즘이 더 중요해질까요?'
+        ],
+        references: [
+          'UNEP 해양 쓰레기 및 미세플라스틱 보고서 — 유입 경로 및 저감 관리 전략',
+          '고도정수처리 입상활성탄·막여과 공정 원리 문헌'
+        ]
+      },
+      {
+        id: 'waste-circular-plastics',
+        category: 'waste',
+        title: '난분해성 폐기물과 화학적 자원 순환',
+        subtitle: '물리적 재활용의 한계를 넘는 열분해·촉매 분해 및 폐바이오매스 업사이클링',
+        severityLabel: '자원 고갈·매립 한계',
+        conceptAndCauses:
+          '다층 포장재와 오염된 혼합 폐플라스틱은 물리적 재활용(파쇄 후 재성형)을 반복할수록 고분자 사슬이 끊어져 물성이 급격히 저하(다운사이클링)됩니다. 또한 농임업 부산물과 유기성 폐기물이 단순 소각·매립될 경우 온실가스 배출과 침출수 오염을 일으킵니다.',
+        scientificPrinciples: [
+          {
+            title: '고분자 열분해 및 촉매 크래킹 (Catalytic Cracking)',
+            description: '산소를 차단한 고온 조건에서 긴 탄화수소 사슬의 C–C 결합을 끊어 저분자 오일·가스로 환원하며, 산성 점을 가진 제올라이트 촉매를 사용하면 반응 온도를 낮추고 원하는 탄화수소 선택도를 높일 수 있습니다.'
+          },
+          {
+            title: '탄화 및 다공성 소재 업사이클링',
+            description: '목질계 폐바이오매스를 열분해하면 휘발성 성분이 빠져나가며 다공성 방향족 탄소 골격(바이오차·활성탄 전구체)이 형성되어 폐기물이 정화 소재로 전환됩니다.'
+          }
+        ],
+        ecologicalImpacts: [
+          '매립지 포화 및 침출수 내 유해 첨가제 유출로 인한 지하수 오염',
+          '폐플라스틱 단순 소각 시 유해 배가스 및 다량의 CO₂ 발생',
+          '유기성 폐기물 혐기 분해 과정에서의 비제어 메탄 배출'
+        ],
+        currentTechnologies: [
+          { name: '제올라이트 촉매 기반 폐플라스틱 열분해유 생산', summary: '혼합 폴리올레핀 폐기물을 나프타 원료 수준의 열분해유로 전환해 신규 플라스틱 원료로 순환시킵니다.', stage: '실증 플랜트 구축 중' },
+          { name: '농업 부산물 기반 바이오차·활성탄 제조', summary: '왕겨, 커피박, 폐목재 등을 탄화·활성화하여 수질·토양 정화제 및 흡착제로 재자원화합니다.', stage: '상용·지역 순환 적용' }
+        ],
+        relatedMaterialIds: ['zeolite', 'biochar', 'activated-carbon'],
+        relatedDatasetIds: ['plastic-recycling-demo', 'mauna-loa-co2'],
+        inquiryQuestions: [
+          '폐플라스틱 열분해 공정에서 제올라이트 촉매의 기공 크기와 산도(Si/Al 비)가 생성물 분포에 어떤 영향을 줄까요?',
+          '폐바이오매스를 소각해 열에너지를 얻는 방식과 바이오차로 만들어 토양에 넣는 방식의 탄소 수지는 어떻게 다를까요?'
+        ],
+        references: [
+          'OECD Global Plastics Outlook — 플라스틱 폐기 및 순환률 개념',
+          'IEA Bioenergy 바이오차 기술 브리프 — 열분해 기반 탄소 고정 원리'
+        ]
+      },
+      {
+        id: 'energy-storage-hydrogen',
+        category: 'energy',
+        title: '재생에너지 간헐성과 고효율 에너지 저장·전환',
+        subtitle: '태양광·풍력의 출력 변동을 흡수하는 차세대 전극 소재, 촉매 및 제습·수전해 기술',
+        severityLabel: '에너지 전환 병목',
+        conceptAndCauses:
+          '태양광과 풍력 발전은 일사량과 풍속에 따라 발전량이 변동하는 간헐성(Intermittency)을 가집니다. 재생에너지 비중이 높아질수록 잉여 전력을 빠르게 저장·방전하는 대용량 에너지 저장장치(ESS, 슈퍼커패시터)와 수전해 수소(H₂) 전환 기술의 효율 및 소재 내구성이 핵심 과제가 됩니다.',
+        scientificPrinciples: [
+          {
+            title: '전기이중층 정전용량 (EDLC) 및 전하 수송',
+            description: '슈퍼커패시터에서는 전극-전해질 계면에 이온이 물리적으로 흡·탈착되며 전하를 저장합니다. 비표면적과 전기전도도가 높은 2D 그래핀과 1D CNT 네트워크가 출력 밀도를 결정합니다.'
+          },
+          {
+            title: '모세관 흡습 및 공정 수분 제어',
+            description: '배터리 건조실 및 수전해 가스 정제 공정에서는 극미량 수분 제어가 수명과 효율에 직결되며, 실리카겔과 제올라이트의 친수성 기공이 저에너지 제습 단계를 담당합니다.'
+          }
+        ],
+        ecologicalImpacts: [
+          '출력 제한(Curtailment)으로 인한 청정 전력 낭비 및 화석연료 백업 발전 가동',
+          '전극 금속(리튬·코발트 등) 채굴 과정의 수자원 고갈 및 광산 폐기물 문제',
+          '송배전·변환 손실에 따른 간접 온실가스 배출 증가'
+        ],
+        currentTechnologies: [
+          { name: '그래핀/CNT 복합 도전재 기반 고출력 배터리·슈퍼커패시터', summary: '소량의 CNT·그래핀을 첨가해 전도 네트워크를 형성하고 충·방전 속도와 수명을 개선합니다.', stage: '상용 적용·고도화 중' },
+          { name: '탄소 기반 촉매 지지체 및 수전해 시스템', summary: '다공성 탄소 구조체 위에 촉매 입자를 고분산시켜 귀금속 사용량을 줄이면서 수소 생산 효율을 높입니다.', stage: '연구·스택 검증 단계' }
+        ],
+        relatedMaterialIds: ['graphene', 'cnt', 'activated-carbon', 'silica-gel'],
+        relatedDatasetIds: ['global-renewable-share', 'noaa-temp-anomaly'],
+        inquiryQuestions: [
+          '리튬이온전지 도전재에서 기존 카본 블랙 대비 소량의 탄소나노튜브(CNT)가 에너지 밀도를 높이는 원리는 무엇일까요?',
+          '잉여 전력을 배터리에 저장하는 방식과 그린수소로 전환해 저장하는 방식은 저장 기간·효율 측면에서 어떻게 다를까요?'
+        ],
+        references: [
+          'IEA Renewables Report — 글로벌 재생에너지 발전 비중 및 계통 유연성 과제',
+          '차세대 수전해 및 탄소 전극 소재 기술 개요 자료'
+        ]
+      }
+    ];
+
+    const CURATED_MISSIONS = [
+      {
+        id: 'mission-microplastic-water',
+        title: '수계 미세플라스틱 제거를 위한 다공성 정화 소재 비교',
+        subtitle: '활성탄·바이오차·그래핀의 수질 정화 원리와 대규모 적용 적합성 분석',
+        category: 'water',
+        topicId: 'water-microplastics',
+        datasetId: 'coastal-microplastics-demo',
+        materialIds: ['activated-carbon', 'biochar', 'graphene'],
+        condition: 'low_cost_scale',
+        aiStarterPrompt: '하수처리장 후단에서 수중 미세플라스틱과 용존 유기오염물질을 동시에 줄이기 위해 활성탄, 바이오차, 그래핀 기반 소재를 적용할 때 각각의 원리와 장단점, 실제 현장 적용 한계를 분석해 주세요.'
+      },
+      {
+        id: 'mission-pm25-air',
+        title: '초미세먼지(PM₂.₅) 추이 분석 및 VOCs 전구물질 포집 전략',
+        subtitle: '국내 연평균 농도 변화 데이터와 제올라이트·활성탄·실리카겔 조합 탐구',
+        category: 'air',
+        topicId: 'air-pm25-secondary',
+        datasetId: 'korea-pm25-trend',
+        materialIds: ['zeolite', 'activated-carbon', 'silica-gel'],
+        condition: 'moisture_control',
+        aiStarterPrompt: '초미세먼지 2차 생성 원인인 VOCs와 악취 가스를 습도가 높은 환경에서 효과적으로 포집·재생하기 위해 제올라이트, 활성탄, 실리카겔을 어떻게 조합하거나 비교 선택해야 하는지 설명해 주세요.'
+      },
+      {
+        id: 'mission-energy-carbon',
+        title: '재생에너지 확산과 고전도성 나노탄소 에너지 저장 소재',
+        subtitle: '전력 전환 추이 확인 및 그래핀·CNT 기반 차세대 전극·슈퍼커패시터 탐구',
+        category: 'energy',
+        topicId: 'energy-storage-hydrogen',
+        datasetId: 'global-renewable-share',
+        materialIds: ['graphene', 'cnt', 'activated-carbon'],
+        condition: 'high_conductivity',
+        aiStarterPrompt: '재생에너지 간헐성 보완을 위한 에너지 저장 장치(슈퍼커패시터 및 고율 이차전지)에서 그래핀, 탄소나노튜브(CNT), 활성탄 전극 소재의 전기화학적 역할과 상용화 한계를 비교 분석해 주세요.'
+      }
+    ];
+
+    const ENVIRONMENTAL_DATASETS = [
+      {
+        id: 'noaa-temp-anomaly',
+        title: '전 지구 연평균 지표 기온 편차 (1951–1980 평균 대비)',
+        category: 'climate',
+        unit: '°C',
+        reliability: 'verified_static',
+        sourceName: 'NASA GISS / NOAA 전 지구 기온 분석 참고 정적 데이터',
+        description: '1951–1980년 기준 평균 기온 대비 각 시점의 전 지구 지표 기온 편차 추이를 나타낸 정적 참고 데이터입니다.',
+        points: [
+          { label: '1980', value: 0.26 }, { label: '1985', value: 0.12 }, { label: '1990', value: 0.45 },
+          { label: '1995', value: 0.45 }, { label: '2000', value: 0.39 }, { label: '2005', value: 0.68 },
+          { label: '2010', value: 0.72 }, { label: '2015', value: 0.90 }, { label: '2020', value: 1.01 },
+          { label: '2023', value: 1.17 }, { label: '2024', value: 1.28 }
+        ]
+      },
+      {
+        id: 'mauna-loa-co2',
+        title: '대기 중 연평균 이산화탄소(CO₂) 농도',
+        category: 'climate',
+        unit: 'ppm',
+        reliability: 'verified_static',
+        sourceName: 'NOAA Global Monitoring Lab (마우나로아 관측소 참고 정적 데이터)',
+        description: '산업 활동과 화석연료 사용 증가에 따른 대기 중 이산화탄소 배경 농도 변화를 보여주는 정적 참고 데이터입니다.',
+        points: [
+          { label: '1980', value: 338.7 }, { label: '1985', value: 346.1 }, { label: '1990', value: 354.4 },
+          { label: '1995', value: 360.8 }, { label: '2000', value: 369.5 }, { label: '2005', value: 379.8 },
+          { label: '2010', value: 389.9 }, { label: '2015', value: 400.8 }, { label: '2020', value: 414.2 },
+          { label: '2023', value: 421.1 }, { label: '2024', value: 424.6 }
+        ]
+      },
+      {
+        id: 'korea-pm25-trend',
+        title: '국내 연평균 초미세먼지(PM₂.₅) 농도 추이',
+        category: 'air',
+        unit: 'μg/m³',
+        reliability: 'verified_static',
+        sourceName: '환경부 국가 대기질 관측 통계 참고 정적 데이터',
+        description: '노후 경유차 저감 및 배출 관리 정책 시행 이후 국내 연평균 PM₂.₅ 농도 변화 추이입니다.',
+        points: [
+          { label: '2015', value: 26 }, { label: '2016', value: 26 }, { label: '2017', value: 25 },
+          { label: '2018', value: 23 }, { label: '2019', value: 23 }, { label: '2020', value: 19 },
+          { label: '2021', value: 18 }, { label: '2022', value: 18 }, { label: '2023', value: 18 },
+          { label: '2024', value: 16 }
+        ]
+      },
+      {
+        id: 'global-renewable-share',
+        title: '전 세계 전력 생산 중 재생에너지 비중',
+        category: 'energy',
+        unit: '%',
+        reliability: 'verified_static',
+        sourceName: 'IEA / Ember 글로벌 전력 통계 참고 정적 데이터',
+        description: '수력·태양광·풍력 등을 포함한 글로벌 전력 발전량 내 재생에너지 비율의 증가 추세입니다.',
+        points: [
+          { label: '2015', value: 23.1 }, { label: '2016', value: 24.0 }, { label: '2017', value: 24.8 },
+          { label: '2018', value: 25.6 }, { label: '2019', value: 26.6 }, { label: '2020', value: 28.4 },
+          { label: '2021', value: 28.3 }, { label: '2022', value: 29.6 }, { label: '2023', value: 30.3 },
+          { label: '2024', value: 32.0 }
+        ]
+      },
+      {
+        id: 'coastal-microplastics-demo',
+        title: '연안 표층수 미세플라스틱 농도 변동 시뮬레이션',
+        category: 'water',
+        unit: 'particles/m³',
+        reliability: 'sample_demo',
+        sourceName: '교육·탐구 시연용 [예시 데이터] (실제 특정 해역 관측값이 아님)',
+        description: '강우 유출량 증가 시 연안 유입 미세플라스틱 농도 변동을 가정한 시연용 예시 데이터입니다. 실제 관측값이 아닙니다.',
+        points: [
+          { label: '1구간', value: 14.2 }, { label: '2구간', value: 16.5 }, { label: '3구간', value: 21.0 },
+          { label: '4구간', value: 28.4 }, { label: '5구간', value: 36.8 }, { label: '6구간', value: 44.5 },
+          { label: '7구간', value: 39.2 }, { label: '8구간', value: 31.0 }, { label: '9구간', value: 24.6 },
+          { label: '10구간', value: 19.8 }
+        ]
+      },
+      {
+        id: 'plastic-recycling-demo',
+        title: '폐플라스틱 순환 공정 도입 시나리오별 연간 매립량 추이',
+        category: 'waste',
+        unit: '천 톤/년',
+        reliability: 'sample_demo',
+        sourceName: '교육·탐구 시연용 [예시 데이터] (가상 공정 시나리오 모델)',
+        description: '물리적 재활용 외에 촉매 열분해를 단계적으로 확대할 경우를 가정한 가상 시나리오 예시 데이터입니다.',
+        points: [
+          { label: '1년차', value: 480 }, { label: '2년차', value: 465 }, { label: '3년차', value: 430 },
+          { label: '4년차', value: 390 }, { label: '5년차', value: 345 }, { label: '6년차', value: 298 },
+          { label: '7년차', value: 255 }, { label: '8년차', value: 210 }
+        ]
+      }
+    ];
+
+    const MATERIAL_CONDITIONS = {
+      low_cost_scale: { label: '저비용 · 대규모 현장 적용', desc: '원료 조달 비용과 대량 처리 경제성이 가장 중요한 수질·토양 정화 조건' },
+      selective_ion: { label: '특정 이온 · 분자 선택 분리', desc: '암모늄, 중금속 이온 또는 특정 크기 분자를 골라내야 하는 정밀 분리 조건' },
+      high_conductivity: { label: '고전도성 · 에너지 소자/센서', desc: '전자 이동 속도, 전극 비표면적, 정밀 오염 감지 민감도가 핵심인 조건' },
+      moisture_control: { label: '수분 제어 · 가스 제습/담체', desc: '공기·공정 가스 내 수분을 안정적으로 포집하고 저온 재생해야 하는 조건' },
+      regeneration: { label: '반복 재생 · 장기 운전 안정성', desc: '열적·화학적 세척 후 성능 저하 없이 다회 재사용이 요구되는 순환 공정 조건' }
+    };
+
+    const ECO_MATERIALS = [
+      {
+        id: 'graphene',
+        nameKo: '그래핀',
+        nameEn: 'Graphene',
+        formulaOrType: '2D sp² 탄소 단일 원자층 (C)',
+        svgType: 'graphene',
+        categoryTags: ['water', 'energy', 'air'],
+        summary: '이론 비표면적 2,630 m²/g과 초고속 전자 이동도를 지닌 2차원 탄소 소재',
+        definitionAndStructure: '그래핀은 탄소 원자가 sp² 혼성 오비탈을 이루어 벌집 모양의 육각형 격자로 1원자 두께(약 0.34 nm)로 배열된 2차원 나노소재입니다. 산화그래핀(GO)으로 개질해 산소 작용기를 도입하면 수계 분산성과 선택적 막 여과 기능을 설계할 수 있습니다.',
+        props: {
+          specificSurfaceArea: '이론 ~2,630 m²/g (분말 400–1,500 m²/g)',
+          poreSize: '층간 나노채널 (0.35–1.2 nm 조절 가능)',
+          thermalStability: '불활성 > 1,000 °C (공기 중 ~500 °C 산화)',
+          surfaceChemistry: '소수성 π-전자 구름 (GO 개질 시 친수성 작용기 부여)',
+          costTier: '높음 (고품질 대량 합성 비용 부담)',
+          regenerationEase: '보통 (시트 재응집 억제 필요)'
+        },
+        traits: [
+          '구리보다 우수한 전기전도도 및 상온 최고 수준의 열전도성',
+          '강철 약 100배 수준의 인장 강도와 유연한 2차원 시트 구조',
+          'π–π 적층 상호작용을 통한 방향족 유기오염물질 결합력 보유'
+        ],
+        applications: [
+          { domain: '수질 정화 분리막', desc: '산화그래핀(GO) 적층막의 층간 간격을 제어해 해수 담수화 및 미세플라스틱·중금속 이온 분리.' },
+          { domain: '에너지 저장 장치', desc: '슈퍼커패시터 전극 및 이차전지 도전재로 적용해 급속 충·방전 출력 밀도 향상.' },
+          { domain: '초고감도 환경 센서', desc: 'NO₂, NH₃ 등 극미량 유해 가스 흡착 시 전기저항 변화를 감지하는 센서.' }
+        ],
+        pros: ['극도로 높은 이론 비표면적과 전기전도도', '분리막 채널 크기 정밀 제어 가능', '소량 첨가로 복합소재 물성 대폭 개선'],
+        limitations: ['시트 간 재적층(Restacking)으로 가용 표면적이 줄어들 수 있음', '대량 생산 단가가 높고 나노시트 유출 시 생태 독성 관리 필요'],
+        suitability: {
+          low_cost_scale: { fit: '제한적', rationale: '원료 단가와 분산·회수 비용이 높아 대규모 저비용 폐수 처리 단독 적용은 비경제적입니다.' },
+          selective_ion: { fit: '적합', rationale: '산화그래핀 층간 나노채널 설계를 통해 수화된 특정 이온과 나노입자를 정밀하게 배제할 수 있습니다.' },
+          high_conductivity: { fit: '적합', rationale: '비편재화 π-전자 덕분에 전하 수송 속도가 탁월해 슈퍼커패시터와 고감도 센서에 매우 적합합니다.' },
+          moisture_control: { fit: '제한적', rationale: '소수성 특성상 제습 목적에는 실리카겔·제올라이트가 훨씬 효율적입니다.' },
+          regeneration: { fit: '조건부 적합', rationale: '화학적 안정성은 높으나 건조·재생 시 시트 재응집 방지 설계가 필요합니다.' }
+        },
+        references: ['Novoselov et al., Science (2004) — 2차원 탄소 박막 물성 규명 개념', '산화그래핀(GO) 나노여과 분리막 연구 동향'],
+        relatedTopicIds: ['water-microplastics', 'energy-storage-hydrogen']
+      },
+      {
+        id: 'cnt',
+        nameKo: '탄소나노튜브',
+        nameEn: 'Carbon Nanotubes (CNT)',
+        formulaOrType: '1D 원통형 sp² 탄소 나노구조',
+        svgType: 'cnt',
+        categoryTags: ['energy', 'water', 'air'],
+        summary: '그래핀 시트를 말아 놓은 1차원 중공 튜브 구조로, 고강도·고전도성 도전재 및 나노여과 소재로 활용',
+        definitionAndStructure: '탄소나노튜브(CNT)는 sp² 결합 탄소 육각 망면이 직경 수~수십 nm의 속이 빈 원통형으로 말린 1차원 나노소재입니다. 단일벽(SWCNT)과 다중벽(MWCNT)으로 구분되며, 내부 중공과 다발 간극이 물질 전달 경로로 작동합니다.',
+        props: {
+          specificSurfaceArea: '150–1,300 m²/g',
+          poreSize: '내부 중공 1–15 nm / 다발 간 중기공',
+          thermalStability: '불활성 > 750 °C (공기 중 ~500–600 °C)',
+          surfaceChemistry: '소수성 외벽 (산 처리 시 -COOH, -OH 도입)',
+          costTier: '중상 (MWCNT는 도전재 대량 생산 확대)',
+          regenerationEase: '보통 (나노분진 취급 안전 관리 필요)'
+        },
+        traits: [
+          '큰 종횡비 덕분에 소량으로도 3차원 전기 전도 네트워크 형성',
+          '매끄러운 탄소 내벽을 통한 빠른 나노유체 수투과 특성',
+          '산·염기 및 유기용매 환경에서 높은 화학적 내구성'
+        ],
+        applications: [
+          { domain: '이차전지 도전재', desc: '전기차 배터리에 소량 첨가해 도전재 비율을 낮추고 에너지 밀도·급속충전 개선.' },
+          { domain: '고투과 수처리 복합막', desc: '고분자 막 내부에 CNT 수로를 복합화해 수투과 저항 감소 및 오염물 차단.' },
+          { domain: '촉매 지지체', desc: '연료전지 촉매 부식을 막는 고내구성 탄소 담체로 활용.' }
+        ],
+        pros: ['1차원 얽힘 구조로 3D 전도성 및 기계적 보강 탁월', 'MWCNT 배터리 도전재 상용 공급망 확보', '작용기 개질 시 중금속 이온 흡착 가능'],
+        limitations: ['튜브 응집 현상으로 균일 분산 기술이 성능을 좌우', '잔류 금속 촉매 정제 및 흡입 분진 안전 관리가 필수'],
+        suitability: {
+          low_cost_scale: { fit: '제한적', rationale: '공공 대량 수처리 충진재로 쓰기엔 활성탄·바이오차보다 원가가 높고 회수 관리가 어렵습니다.' },
+          selective_ion: { fit: '조건부 적합', rationale: '표면 작용기 개질로 중금속 킬레이트 흡착이 가능하나 결정질 이온교환체보다 선택성은 낮습니다.' },
+          high_conductivity: { fit: '적합', rationale: '높은 종횡비로 적은 함량으로 전극 전도 경로를 형성해 배터리·슈퍼커패시터에 매우 강합니다.' },
+          moisture_control: { fit: '제한적', rationale: '기본 표면이 소수성이므로 제습제보다는 전자소자·막 분리 분야에 적합합니다.' },
+          regeneration: { fit: '조건부 적합', rationale: '막이나 전극에 고정된 형태는 내구성이 좋지만 분말 회수·재생은 까다롭습니다.' }
+        },
+        references: ['Iijima, Nature (1991) — 탄소나노튜브 구조 발견', '리튬이온전지용 MWCNT 도전재 및 복합막 연구 동향'],
+        relatedTopicIds: ['energy-storage-hydrogen', 'water-microplastics']
+      },
+      {
+        id: 'zeolite',
+        nameKo: '제올라이트',
+        nameEn: 'Zeolite',
+        formulaOrType: '결정질 다공성 알루미노규산염 (SiO₂·Al₂O₃)',
+        svgType: 'zeolite',
+        categoryTags: ['air', 'water', 'soil'],
+        summary: '균일한 분자 크기 기공(분자체)과 양이온 교환 능력을 가진 천연·합성 무기 광물 소재',
+        definitionAndStructure: '제올라이트는 규소(Si⁴⁺)와 알루미늄(Al³⁺) 산소 사면체가 3차원 그물망으로 연결되어 균일한 미세 기공과 동공(Cage)을 형성한 결정질 광물입니다. Al³⁺ 치환으로 발생한 골격 음전하를 중화하기 위해 기공 내 교환 가능한 양이온(Na⁺, Ca²⁺ 등)이 존재합니다.',
+        props: {
+          specificSurfaceArea: '300–900 m²/g',
+          poreSize: '0.3–1.0 nm (엄격히 균일한 분자체 기공)',
+          thermalStability: '매우 높음 (700–900 °C 이상 불연성)',
+          surfaceChemistry: 'Si/Al 비에 따라 친수성~소수성 및 고체 산성 조절',
+          costTier: '낮음~보통 (천연 제올라이트는 매우 저렴)',
+          regenerationEase: '우수함 (고온 열탈착 및 염수 이온교환 재생)'
+        },
+        traits: [
+          '분자 크기 차이에 따라 특정 분자만 선별하는 분자체(Molecular Sieve) 효과',
+          '수용액에서 암모늄(NH₄⁺), 세슘(Cs⁺), 중금속 양이온 선택 교환',
+          '불연성 무기 결정으로 고온 배가스 및 촉매 환경에서 안정적'
+        ],
+        applications: [
+          { domain: '수질 암모늄·중금속 제거', desc: '천연 제올라이트를 이용해 폐수 중 질소(NH₄⁺) 및 방사성 세슘 이온 선택 제거.' },
+          { domain: '폐플라스틱 촉매 열분해', desc: 'ZSM-5 등 합성 제올라이트의 고체 산점을 이용해 폐플라스틱을 경질 오일로 전환.' },
+          { domain: 'CO₂ 분리 및 VOCs 로터', desc: '소수성 제올라이트 로터로 다습한 산업 배가스에서 VOCs만 선택 흡착 후 열풍 재생.' }
+        ],
+        pros: ['균일한 분자 단위 기공으로 선택적 분리·촉매에 탁월', '불연성이어서 고온 열풍 재생 시 발화 위험 없음', '천연 광물 대량 산출로 비용 경쟁력 보유'],
+        limitations: ['거대 유기 분자(부식산, 대형 염료) 흡착에는 기공이 작을 수 있음', '극한 강산·강알칼리 환경에서 알루미늄 용출 주의'],
+        suitability: {
+          low_cost_scale: { fit: '적합', rationale: '천연 제올라이트는 단가가 낮고 강도가 높아 축산 폐수·하천 정화 여재로 대규모 적용이 가능합니다.' },
+          selective_ion: { fit: '적합', rationale: '골격 음전하와 균일한 동공 크기 덕분에 암모늄·중금속 이온 및 크기별 가스 분리에 가장 뛰어납니다.' },
+          high_conductivity: { fit: '제한적', rationale: '알루미노규산염 절연체이므로 전자 전도성이 필요한 전극·도전재 용도로는 적합하지 않습니다.' },
+          moisture_control: { fit: '적합', rationale: '친수성 제올라이트(3A, 4A, 13X)는 극저습 영역에서도 수분 포집력이 강해 정밀 건조에 널리 쓰입니다.' },
+          regeneration: { fit: '적합', rationale: '700 °C 이상의 내열성과 불연성 덕분에 열탈착 또는 염수 이온교환 재생을 수백 회 반복할 수 있습니다.' }
+        },
+        references: ['국제제올라이트학회(IZA) 결정 구조 데이터베이스 기공 분류', 'ZSM-5 폐플라스틱 촉매 열분해 및 수질 이온교환 공정 연구'],
+        relatedTopicIds: ['waste-circular-plastics', 'air-pm25-secondary', 'climate-greenhouse-warming']
+      },
+      {
+        id: 'biochar',
+        nameKo: '바이오차',
+        nameEn: 'Biochar',
+        formulaOrType: '바이오매스 무산소 열분해 다공성 탄소체',
+        svgType: 'biochar',
+        categoryTags: ['soil', 'water', 'air'],
+        summary: '농임업 폐바이오매스를 열분해해 만드는 저비용 친환경 흡착제이자 장기 탄소 격리 소재',
+        definitionAndStructure: '바이오차는 목재, 왕겨, 볏짚, 커피박 같은 바이오매스를 산소가 제한된 조건(300–800 °C)에서 열분해하여 얻는 다공성 고체 탄소 물질입니다. 광합성으로 고정된 탄소를 난분해성 방향족 탄소 골격으로 전환하며, 원료의 식물 세포벽 통로와 무기 회분 성분을 함께 지닙니다.',
+        props: {
+          specificSurfaceArea: '50–500 m²/g (활성화 시 > 800 m²/g)',
+          poreSize: '거대기공(> 50 nm) + 중간기공 중심',
+          thermalStability: '보통 (토양 내 탄소 반감기 수백 년)',
+          surfaceChemistry: '저온: 산소 작용기 풍부 / 고온: 방향족 소수성',
+          costTier: '매우 낮음 (지역 폐바이오매스 업사이클링)',
+          regenerationEase: '보통 (저비용 교체 및 토양·에너지 순환 가능)'
+        },
+        traits: [
+          '식물 도관·세포벽 구조가 보존되어 유체 투과성이 좋은 거대기공 발달',
+          '높은 양이온 교환 능력(CEC)으로 토양 내 영양분과 수분 보유력 증진',
+          '생산 및 토양 적용 자체가 대기 탄소를 고형화하는 탄소 격리 효과'
+        ],
+        applications: [
+          { domain: '토양 탄소 격리 및 개량', desc: '농경지 토양에 혼합해 탄소를 수백 년간 고정하고 중금속 이동성을 저감.' },
+          { domain: '저비용 폐수·우수 정화', desc: '왕겨·폐목재 바이오차 여과층으로 중금속, 질산염, 잔류 농약 및 미세입자 저감.' },
+          { domain: '악취·황화수소(H₂S) 제거', desc: '알칼리 회분 성분을 활용해 산성 악취 가스를 경제적으로 중화 흡착.' }
+        ],
+        pros: ['폐기물을 원료로 사용해 제조 원가가 매우 저렴하고 자원 순환에 기여', '실질적인 온실가스 감축(탄소 격리) 효과 제공', '중금속 침전·이온교환·물리 흡착이 복합 작동'],
+        limitations: ['원료와 열분해 온도에 따라 품질 편차가 커서 표준화(IBI 등)가 필요', '별도 활성화 없이는 상용 활성탄보다 미세기공과 비표면적이 낮음'],
+        suitability: {
+          low_cost_scale: { fit: '적합', rationale: '폐바이오매스를 현지에서 저비용 생산할 수 있어 농촌 폐수 정화, 우수 필터, 대규모 토양 복원에 가장 유리합니다.' },
+          selective_ion: { fit: '조건부 적합', rationale: '표면 작용기와 회분 탄산염으로 중금속 이온 고정은 가능하지만 균일한 분자체 선택성은 제올라이트보다 낮습니다.' },
+          high_conductivity: { fit: '제한적', rationale: '고온 탄화 시 일부 전도성이 생기지만 그래핀·CNT 수준의 고율 전극 도전재로는 한계가 있습니다.' },
+          moisture_control: { fit: '조건부 적합', rationale: '토양 보수력은 뛰어나지만 정밀 기체 제습용으로는 실리카겔이나 제올라이트가 적합합니다.' },
+          regeneration: { fit: '조건부 적합', rationale: '반복 열재생보다는 저렴한 단가를 살려 일정 기간 사용 후 안전 범위 내에서 교체·순환하는 편이 경제적입니다.' }
+        },
+        references: ['International Biochar Initiative (IBI) 물성 표준 가이드라인', 'IPCC 토지 부문 탄소 제거 기술로서의 바이오차 평가'],
+        relatedTopicIds: ['climate-greenhouse-warming', 'waste-circular-plastics', 'water-microplastics']
+      },
+      {
+        id: 'activated-carbon',
+        nameKo: '활성탄',
+        nameEn: 'Activated Carbon',
+        formulaOrType: '고도 활성화 다공성 비정질 탄소 (C)',
+        svgType: 'activated-carbon',
+        categoryTags: ['water', 'air', 'energy'],
+        summary: '수증기·화학 활성화로 미세기공을 극대화한 수처리 및 대기 정화 분야의 산업 표준 흡착제',
+        definitionAndStructure: '활성탄은 야자각, 석탄, 목재 등을 탄화한 뒤 800–1,000 °C에서 수증기·CO₂ 또는 화학 약품으로 내부 탄소를 부분 식각하여 거대-중간-미세기공이 계층적으로 연결된 초다공성 탄소 소재입니다. 분말(PAC), 입상(GAC), 섬유상(ACF) 형태로 가공됩니다.',
+        props: {
+          specificSurfaceArea: '800–2,000 m²/g',
+          poreSize: '계층적 기공 (미세기공 < 2 nm + 중간기공 2–50 nm)',
+          thermalStability: '비활성 > 800 °C (공기 중 ~350–450 °C 발화 주의)',
+          surfaceChemistry: '비극성 소수성 표면 중심',
+          costTier: '보통 (산업 표준 대규모 공급망 확보)',
+          regenerationEase: '우수함 (열수증기 재활성화 인프라 구축)'
+        },
+        traits: [
+          '미세기공 밀도가 매우 높아 저농도 유기화합물과 악취 분자를 강하게 포집',
+          '소수성 표면 특성으로 수중 비극성 유기오염물질(페놀, 농약, THMs) 선택 흡착',
+          '공정 유속과 압력 손실에 맞춘 다양한 입도 선택 가능'
+        ],
+        applications: [
+          { domain: '정수장 고도정수처리', desc: '수돗물 내 잔류염소, 소독부산물, 미량 의약물질, 맛·냄새 유발 물질 제거.' },
+          { domain: '공기청정기 및 VOCs 필터', desc: '실내 포름알데히드, 톨루엔 및 산업 배가스 유기용제 흡착 제거.' },
+          { domain: '슈퍼커패시터(EDLC) 전극', desc: '높은 비표면적 덕분에 대용량 슈퍼커패시터 상용 활물질로 널리 사용.' }
+        ],
+        pros: ['전 세계 수처리·공기정화 산업에서 검증된 안정성과 공급망', '미량 유기오염물질 및 VOCs에 대한 광범위한 고효율 흡착', '열 재활성화 공정 인프라 확립'],
+        limitations: ['친수성 무기 이온(질산염, 암모늄 등) 제거 효율은 낮음', '공기 중 고온에서 발화 위험 관리 필요 및 고습 환경에서 수분과 경쟁 흡착 발생'],
+        suitability: {
+          low_cost_scale: { fit: '적합', rationale: '정형화된 품질과 대량 조달·재생 인프라 덕분에 상용 정수장 및 대형 공조 시스템의 표준 해법입니다.' },
+          selective_ion: { fit: '제한적', rationale: '비극성 유기물 흡착에는 최강이나, 암모늄·중금속 이온 선택 제거는 제올라이트가 더 적합합니다.' },
+          high_conductivity: { fit: '조건부 적합', rationale: '상용 슈퍼커패시터 전극 활물질로 쓰이지만 자체 전도도가 낮아 CNT/그래핀 도전재를 함께 배합합니다.' },
+          moisture_control: { fit: '제한적', rationale: '소수성 특성상 제습제 역할에는 부적합하며 고습 조건에서 유기 가스 흡착력이 저하됩니다.' },
+          regeneration: { fit: '적합', rationale: '입상활성탄(GAC)의 열적 재활성화 공정이 산업적으로 확립되어 있어 반복 운전이 가능합니다.' }
+        },
+        references: ['AWWA 입상활성탄(GAC) 고도정수처리 설계 기준', '야자각계 활성탄 기반 VOCs 흡착 및 EDLC 전극 응용 문헌'],
+        relatedTopicIds: ['water-microplastics', 'air-pm25-secondary', 'energy-storage-hydrogen']
+      },
+      {
+        id: 'silica-gel',
+        nameKo: '실리카겔',
+        nameEn: 'Silica Gel',
+        formulaOrType: '비정질 다공성 이산화규소 (SiO₂·nH₂O)',
+        svgType: 'silica-gel',
+        categoryTags: ['air', 'energy', 'water'],
+        summary: '표면 실라놀기(-OH)의 수소결합으로 수분을 저온 재생·제어하는 무독성 다공성 규소 산화물',
+        definitionAndStructure: '실리카겔은 규산나트륨 수용액의 졸-겔 축합 반응으로 규소-산소(Si–O–Si) 3차원 망목 구조가 형성된 비정질 다공성 이산화규소입니다. 수많은 나노 모세관 표면에 친수성 실라놀기(Si–OH)가 고밀도로 노출되어 있어 극성 물 분자를 강하게 포집합니다.',
+        props: {
+          specificSurfaceArea: '300–800 m²/g',
+          poreSize: '2–20 nm (A형: 2–3 nm / B형: 4–10 nm)',
+          thermalStability: '불연성 (300 °C 이상 과열 시 표면 -OH 탈수 주의)',
+          surfaceChemistry: '강친수성 실라놀기(-OH) 풍부 (아민 그래프팅 가능)',
+          costTier: '낮음 (대량 생산 및 취급 안전성 우수)',
+          regenerationEase: '매우 우수함 (110–150 °C 저온 가열만으로 완전 탈착)'
+        },
+        traits: [
+          '수소결합과 모세관 응축을 통해 자기 무게의 약 30–40%까지 수분 흡수',
+          '제올라이트(200–350 °C) 대비 훨씬 낮은 온도(110–140 °C)에서 재생 가능',
+          '화학적으로 비활성이며 불연성·무독성(표준 백색 기준)으로 안전함'
+        ],
+        applications: [
+          { domain: '태양열·폐열 데시칸트 제습 냉방', desc: '100 °C 안팎 저온 폐열로 실리카겔 로터를 재생해 냉방 에너지를 절감하는 공조 시스템.' },
+          { domain: 'VOCs 필터 전단 제습 및 아민 담지 CO₂ 포집', desc: '활성탄 전단에서 습기를 제거해 주 흡착제를 보호하거나 아민 기능기로 CO₂ 포집.' },
+          { domain: '배터리·수전해 건조 공정', desc: '고순도 가스 및 전해액 라인의 수분 제어.' }
+        ],
+        pros: ['저온(110–140 °C) 열풍만으로 에너지 소비를 줄이며 반복 재생 가능', '중간·고습도 영역에서 수분 흡습 용량이 매우 큼', '화학적 비활성·무취·불연성'],
+        limitations: ['비극성 VOCs 자체 흡착력은 활성탄보다 현저히 낮음', '액체 물이 직접 급격히 닿으면 모세관 압력으로 입자가 파쇄될 수 있음'],
+        suitability: {
+          low_cost_scale: { fit: '조건부 적합', rationale: '공기 제습·공조 설비에서는 매우 경제적이지만, 대량 수처리 오염물질 흡착제 용도와는 다릅니다.' },
+          selective_ion: { fit: '제한적', rationale: '골격 이온교환 전하가 없어 양이온 선택 제거에는 별도 표면 화학 개질이 필요합니다.' },
+          high_conductivity: { fit: '제한적', rationale: '이산화규소는 전기 절연체이므로 에너지 저장 전극·도전재로는 사용할 수 없습니다.' },
+          moisture_control: { fit: '적합', rationale: '실라놀기 기반 수소결합과 110–140 °C 저온 재생 특성 덕분에 친환경 폐열 제습과 습도 제어에 최적입니다.' },
+          regeneration: { fit: '적합', rationale: '가장 낮은 온도(110–140 °C)에서 탈착 재생이 가능해 에너지 효율이 우수합니다.' }
+        },
+        references: ['데시칸트 제습 공조(Desiccant Cooling)용 실리카겔 열역학 자료', '아민 기능화 다공성 실리카 기반 CO₂ 포집 연구 동향'],
+        relatedTopicIds: ['air-pm25-secondary', 'energy-storage-hydrogen']
+      }
+    ];
+
+    // =========================================================================
+    // 2. PERSISTENCE (localStorage Repository) & GLOBAL STATE
+    // =========================================================================
+    const STORAGE_KEY = 'ecolab_research_projects_v1';
+
+    const state = {
+      activeModule: 'home',
+      explorerCategory: 'all',
+      explorerSearch: '',
+      activeTopicId: ENVIRONMENT_TOPICS[2].id, // Default focus: water-microplastics
+      dataSourceMode: 'builtin',
+      activeDatasetId: 'noaa-temp-anomaly',
+      compareDatasetId: 'none',
+      chartType: 'line',
+      normalizeCompare: false,
+      showDataTable: false,
+      startIdx: 0,
+      endIdx: 999,
+      csvFileName: '',
+      csvParsed: null,
+      csvXCol: '',
+      csvYCol: '',
+      csvCompareCol: 'none',
+      csvError: null,
+      dataAiStatus: 'idle',
+      dataAiResult: null,
+      dataAiError: null,
+      dataSnapshot: null,
+      materialDomain: 'all',
+      materialSearch: '',
+      materialViewMode: 'explore',
+      comparedMaterialIds: ['activated-carbon', 'biochar'],
+      activeCondition: 'low_cost_scale',
+      detailMaterialId: null,
+      aiQuery: '',
+      aiDifficulty: 'high_school',
+      aiStatus: 'idle',
+      aiReport: null,
+      aiError: null,
+      aiValidationError: null,
+      followUpInput: '',
+      followUpLoading: false,
+      followUpError: null,
+      projects: [],
+      activeProjectId: null,
+      notebookSearch: '',
+      notebookStatusFilter: 'all',
+      editingProjectMeta: false,
+      showNewEntryForm: false,
+      editingEntryId: null,
+      corruptedBackupRaw: null
+    };
+
+    function loadProjectsFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+          state.corruptedBackupRaw = raw;
+          return;
+        }
+        state.projects = parsed.filter(p => p && typeof p.id === 'string' && Array.isArray(p.entries));
+        if (state.projects.length > 0) {
+          state.activeProjectId = state.projects[0].id;
+        }
+      } catch (e) {
+        state.corruptedBackupRaw = localStorage.getItem(STORAGE_KEY) || 'invalid';
+      }
+    }
+
+    function saveProjectsToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.projects));
+      } catch (e) {
+        showToast('브라우저 저장 공간이 부족합니다. 마크다운으로 백업해 주세요.');
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function showToast(msg, actionLabel, actionFn) {
+      const root = document.getElementById('toast-root');
+      root.innerHTML = `
+        <div class="toast">
+          <span>${escapeHtml(msg)}</span>
+          ${actionLabel ? `<button type="button" id="toast-action" style="background:none;border:none;color:#6EE7B7;font-weight:600;text-decoration:underline;padding:0;">${escapeHtml(actionLabel)}</button>` : ''}
+        </div>
+      `;
+      if (actionLabel && actionFn) {
+        document.getElementById('toast-action').onclick = () => {
+          root.innerHTML = '';
+          actionFn();
+        };
+      }
+      setTimeout(() => { root.innerHTML = ''; }, 3600);
+    }
+
+    // =========================================================================
+    // 3. INLINE SCIENTIFIC SVG ARTWORK (Works offline & via file://)
+    // =========================================================================
+    function renderHeroSvg() {
+      return `
+        <svg viewBox="0 0 560 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <linearGradient id="heroBg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#071510"/>
+              <stop offset="100%" stop-color="#0F3526"/>
+            </linearGradient>
+          </defs>
+          <rect width="560" height="360" fill="url(#heroBg)"/>
+          <g stroke="rgba(110,231,183,0.14)" stroke-width="1" fill="none">
+            <path d="M0 70 H560 M0 140 H560 M0 210 H560 M0 280 H560"/>
+            <path d="M90 0 V360 M180 0 V360 M270 0 V360 M360 0 V360 M450 0 V360"/>
+          </g>
+          <!-- Hexagonal Carbon Lattice -->
+          <g transform="translate(80,55)" stroke="#34D399" stroke-width="1.6" fill="none" opacity="0.85">
+            <polygon points="40,0 74,20 74,60 40,80 6,60 6,20"/>
+            <polygon points="108,0 142,20 142,60 108,80 74,60 74,20"/>
+            <polygon points="74,60 108,80 108,120 74,140 40,120 40,80"/>
+            <polygon points="142,60 176,80 176,120 142,140 108,120 108,80"/>
+            <circle cx="40" cy="0" r="3.5" fill="#A7F3D0"/>
+            <circle cx="74" cy="20" r="3.5" fill="#A7F3D0"/>
+            <circle cx="74" cy="60" r="3.5" fill="#A7F3D0"/>
+            <circle cx="108" cy="80" r="3.5" fill="#A7F3D0"/>
+            <circle cx="142" cy="60" r="3.5" fill="#A7F3D0"/>
+          </g>
+          <!-- Telemetry Trend Line -->
+          <path d="M290 205 L335 182 L380 190 L425 145 L470 118 L515 92" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="380" cy="190" r="4" fill="#fff"/>
+          <circle cx="470" cy="118" r="4" fill="#fff"/>
+          <circle cx="515" cy="92" r="5" fill="#6EE7B7"/>
+        </svg>
+      `;
+    }
+
+    function renderMaterialSvg(type) {
+      if (type === 'graphene') {
+        return `<svg viewBox="0 0 320 240"><rect width="320" height="240" fill="#0B1612"/>
+          <g transform="translate(55,40)" stroke="#34D399" stroke-width="1.8" fill="rgba(16,185,129,0.08)">
+            <polygon points="35,0 65,17 65,52 35,70 5,52 5,17"/>
+            <polygon points="95,0 125,17 125,52 95,70 65,52 65,17"/>
+            <polygon points="155,0 185,17 185,52 155,70 125,52 125,17"/>
+            <polygon points="65,52 95,70 95,105 65,122 35,105 35,70"/>
+            <polygon points="125,52 155,70 155,105 125,122 95,105 95,70"/>
+            <polygon points="95,105 125,122 125,157 95,175 65,157 65,122"/>
+          </g>
+          <text x="16" y="222" fill="#94A3B8" font-size="11" font-family="monospace">2D sp² Hexagonal Sheet · ~0.34 nm</text>
+        </svg>`;
+      }
+      if (type === 'cnt') {
+        return `<svg viewBox="0 0 320 240"><rect width="320" height="240" fill="#0D1418"/>
+          <g stroke="#38BDF8" stroke-width="1.5" fill="none" opacity="0.85">
+            <ellipse cx="160" cy="48" rx="56" ry="16" fill="rgba(56,189,248,0.1)"/>
+            <ellipse cx="160" cy="182" rx="56" ry="16" stroke-dasharray="4 3"/>
+            <line x1="104" y1="48" x2="104" y2="182"/>
+            <line x1="216" y1="48" x2="216" y2="182"/>
+            <path d="M110 85 Q160 105 210 85 M110 120 Q160 140 210 120 M110 155 Q160 175 210 155" stroke="#10B981"/>
+            <line x1="135" y1="62" x2="135" y2="196" stroke-opacity="0.5"/>
+            <line x1="185" y1="62" x2="185" y2="196" stroke-opacity="0.5"/>
+          </g>
+          <text x="16" y="222" fill="#94A3B8" font-size="11" font-family="monospace">1D Cylindrical Nanotube · High Aspect Ratio</text>
+        </svg>`;
+      }
+      if (type === 'zeolite') {
+        return `<svg viewBox="0 0 320 240"><rect width="320" height="240" fill="#F1F5F3"/>
+          <g transform="translate(80,35)" stroke="#064E3B" stroke-width="2" fill="rgba(6,78,59,0.06)">
+            <polygon points="80,10 135,42 135,108 80,140 25,108 25,42"/>
+            <polygon points="80,38 110,55 110,95 80,112 50,95 50,55" fill="#FFFFFF"/>
+            <line x1="80" y1="10" x2="80" y2="38"/>
+            <line x1="135" y1="42" x2="110" y2="55"/>
+            <line x1="135" y1="108" x2="110" y2="95"/>
+            <line x1="80" y1="140" x2="80" y2="112"/>
+            <line x1="25" y1="108" x2="50" y2="95"/>
+            <line x1="25" y1="42" x2="50" y2="55"/>
+            <circle cx="80" cy="75" r="10" fill="#10B981" stroke="none"/>
+          </g>
+          <text x="16" y="222" fill="#475569" font-size="11" font-family="monospace">Crystalline Aluminosilicate · 0.3–1.0 nm Cage</text>
+        </svg>`;
+      }
+      if (type === 'silica-gel') {
+        return `<svg viewBox="0 0 320 240"><rect width="320" height="240" fill="#F8FAFC"/>
+          <g stroke="#64748B" stroke-width="1.5">
+            <circle cx="115" cy="115" r="48" fill="#E2E8F0" fill-opacity="0.65"/>
+            <circle cx="195" cy="100" r="36" fill="#CBD5E1" fill-opacity="0.55"/>
+            <circle cx="172" cy="148" r="28" fill="#E2E8F0" fill-opacity="0.7"/>
+            <circle cx="105" cy="105" r="6" fill="#0EA5E9" stroke="none" opacity="0.6"/>
+            <circle cx="128" cy="126" r="5" fill="#0EA5E9" stroke="none" opacity="0.6"/>
+            <circle cx="192" cy="95" r="5" fill="#0EA5E9" stroke="none" opacity="0.6"/>
+          </g>
+          <text x="16" y="222" fill="#475569" font-size="11" font-family="monospace">Amorphous SiO₂ · Hydrophilic -OH Pores</text>
+        </svg>`;
+      }
+      if (type === 'biochar') {
+        return `<svg viewBox="0 0 320 240"><rect width="320" height="240" fill="#131916"/>
+          <g fill="#26332D" stroke="#475569" stroke-width="1.2">
+            <rect x="65" y="45" width="190" height="130" rx="16"/>
+            <circle cx="105" cy="90" r="18" fill="#0B0F0E"/>
+            <circle cx="155" cy="80" r="12" fill="#0B0F0E"/>
+            <circle cx="205" cy="95" r="20" fill="#0B0F0E"/>
+            <circle cx="130" cy="135" r="22" fill="#0B0F0E"/>
+            <circle cx="190" cy="142" r="14" fill="#0B0F0E"/>
+          </g>
+          <text x="16" y="222" fill="#94A3B8" font-size="11" font-family="monospace">Pyrolyzed Biomass · Macroporous Carbon</text>
+        </svg>`;
+      }
+      return `<svg viewBox="0 0 320 240"><rect width="320" height="240" fill="#0B1210"/>
+        <g fill="#1E2924" stroke="#10B981" stroke-width="1.2">
+          <rect x="60" y="42" width="200" height="136" rx="14"/>
+          <circle cx="95" cy="78" r="11" fill="#070B09"/><circle cx="130" cy="75" r="7" fill="#070B09"/>
+          <circle cx="165" cy="82" r="13" fill="#070B09"/><circle cx="210" cy="78" r="9" fill="#070B09"/>
+          <circle cx="105" cy="115" r="8" fill="#070B09"/><circle cx="145" cy="118" r="14" fill="#070B09"/>
+          <circle cx="195" cy="116" r="10" fill="#070B09"/><circle cx="225" cy="122" r="7" fill="#070B09"/>
+          <circle cx="115" cy="150" r="12" fill="#070B09"/><circle cx="168" cy="152" r="9" fill="#070B09"/>
+          <circle cx="212" cy="148" r="11" fill="#070B09"/>
+        </g>
+        <text x="16" y="222" fill="#94A3B8" font-size="11" font-family="monospace">Hierarchical Micropores · 800–2,000 m²/g</text>
+      </svg>`;
+    }
+
+    // =========================================================================
+    // 4. STATISTICS & CSV ENGINE (PURE VANILLA JS)
+    // =========================================================================
+    function calculateStats(points) {
+      if (!points || points.length === 0) {
+        return { count: 0, mean: 0, min: { value: 0, label: '-' }, max: { value: 0, label: '-' }, changeRatePercent: null, absoluteChange: 0, correlation: null };
+      }
+      let sum = 0;
+      let minPt = points[0];
+      let maxPt = points[0];
+      points.forEach(p => {
+        sum += p.value;
+        if (p.value < minPt.value) minPt = p;
+        if (p.value > maxPt.value) maxPt = p;
+      });
+      const first = points[0].value;
+      const last = points[points.length - 1].value;
+      const absoluteChange = last - first;
+      const changeRatePercent = first === 0 ? null : ((last - first) / Math.abs(first)) * 100;
+
+      let correlation = null;
+      const paired = points.filter(p => typeof p.secondaryValue === 'number' && Number.isFinite(p.secondaryValue));
+      if (paired.length >= 3) {
+        const n = paired.length;
+        const mx = paired.reduce((a, b) => a + b.value, 0) / n;
+        const my = paired.reduce((a, b) => a + b.secondaryValue, 0) / n;
+        let num = 0, dx2 = 0, dy2 = 0;
+        paired.forEach(p => {
+          const dx = p.value - mx;
+          const dy = p.secondaryValue - my;
+          num += dx * dy; dx2 += dx * dx; dy2 += dy * dy;
+        });
+        const den = Math.sqrt(dx2 * dy2);
+        correlation = den === 0 ? null : num / den;
+      }
+      return { count: points.length, mean: sum / points.length, min: minPt, max: maxPt, changeRatePercent, absoluteChange, correlation };
+    }
+
+    function fmtNum(v, dec = 2) {
+      if (!Number.isFinite(v)) return '-';
+      if (Math.abs(v) >= 1000) return v.toLocaleString('ko-KR', { maximumFractionDigits: 1 });
+      return v.toLocaleString('ko-KR', { minimumFractionDigits: Number.isInteger(v) ? 0 : Math.min(dec, 2), maximumFractionDigits: dec });
+    }
+
+    function splitCsvLine(line) {
+      const cells = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQ && line[i + 1] === '"') { cur += '"'; i++; }
+          else inQ = !inQ;
+        } else if (ch === ',' && !inQ) {
+          cells.push(cur.trim()); cur = '';
+        } else cur += ch;
+      }
+      cells.push(cur.trim());
+      return cells;
+    }
+
+    function parseCsvText(raw) {
+      const cleaned = raw.replace(/^\uFEFF/, '').trim();
+      if (!cleaned) throw new Error('CSV 파일 내용이 비어 있습니다.');
+      const lines = cleaned.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      if (lines.length < 3) throw new Error('헤더와 최소 2개 이상의 데이터 행이 필요합니다.');
+      const headers = splitCsvLine(lines[0]).map((h, i) => h || `col_${i + 1}`);
+      if (headers.length < 2) throw new Error('최소 2개 이상의 컬럼이 필요합니다.');
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const vals = splitCsvLine(lines[i]);
+        if (vals.every(v => v === '')) continue;
+        const row = {};
+        headers.forEach((h, idx) => { row[h] = vals[idx] || ''; });
+        rows.push(row);
+      }
+      if (rows.length < 2) throw new Error('유효한 데이터 행이 최소 2개 이상 필요합니다.');
+      const numericColumns = headers.filter(h => {
+        let valid = 0;
+        rows.forEach(r => {
+          const num = Number((r[h] || '').replace(/,/g, ''));
+          if ((r[h] || '') !== '' && Number.isFinite(num)) valid++;
+        });
+        return valid >= Math.max(2, Math.floor(rows.length * 0.6));
+      });
+      if (numericColumns.length === 0) throw new Error('그래프로 그릴 수 있는 수치형 컬럼을 찾지 못했습니다.');
+      return { headers, rows, numericColumns };
+    }
+
+    // =========================================================================
+    // 5. NAVIGATION & SHELL RENDERING
+    // =========================================================================
+    const NAV_ITEMS = [
+      { id: 'home', ko: '홈 대시보드', en: 'Home', short: '홈' },
+      { id: 'explorer', ko: '환경 문제 탐색실', en: 'Environment Explorer', short: '탐색' },
+      { id: 'data-lab', ko: '환경 데이터 분석실', en: 'Data Lab', short: '데이터' },
+      { id: 'materials', ko: '친환경 소재 탐색실', en: 'Material Library', short: '소재' },
+      { id: 'ai-lab', ko: 'AI 문제 해결 연구실', en: 'AI Solution Lab', short: 'AI연구' },
+      { id: 'notebook', ko: '나만의 연구 노트', en: 'Research Notebook', short: '노트' }
+    ];
+
+    function getNavIconSvg(id) {
+      const icons = {
+        home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+        explorer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+        'data-lab': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="12" y="6" width="3" height="11"/><rect x="17" y="13" width="3" height="4"/></svg>',
+        materials: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(45 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-45 12 12)"/></svg>',
+        'ai-lab': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v5l-5 9a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 17l-5-9V3"/></svg>',
+        notebook: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'
+      };
+      return icons[id] || '';
+    }
+
+    function navigateTo(moduleId) {
+      state.activeModule = moduleId;
+      document.getElementById('sidebar').classList.remove('mobile-open');
+      renderApp();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMobileSidebar() {
+      document.getElementById('sidebar').classList.toggle('mobile-open');
+    }
+
+    function handleTopbarAction() {
+      navigateTo(state.activeModule === 'ai-lab' ? 'notebook' : 'ai-lab');
+    }
+
+    function renderShell() {
+      const navEl = document.getElementById('sidebar-nav');
+      navEl.innerHTML = NAV_ITEMS.map(item => `
+        <button type="button" class="nav-btn ${state.activeModule === item.id ? 'active' : ''}" onclick="navigateTo('${item.id}')">
+          ${getNavIconSvg(item.id)}
+          <div style="min-width:0;flex:1;">
+            <span class="nav-label-ko">${item.ko}</span>
+            <span class="nav-label-en">${item.en}</span>
+          </div>
+          ${item.id === 'notebook' && state.projects.length > 0 ? `<span class="nav-count mono">${state.projects.length}</span>` : ''}
+        </button>
+      `).join('');
+
+      const activeTopic = ENVIRONMENT_TOPICS.find(t => t.id === state.activeTopicId);
+      document.getElementById('sidebar-context').innerHTML = `
+        <div class="sidebar-context-title">현재 탐구 맥락</div>
+        <div class="sidebar-context-row">주제: <span>${escapeHtml(activeTopic ? activeTopic.title : '선택 안 됨')}</span></div>
+        <div class="sidebar-context-row">데이터: <span>${escapeHtml(state.dataSnapshot ? state.dataSnapshot.datasetTitle : '분석 전')}</span></div>
+        <div class="sidebar-context-row">비교 소재: <span class="mono" style="color:#6EE7B7;">${state.comparedMaterialIds.length}종</span></div>
+      `;
+
+      const cur = NAV_ITEMS.find(n => n.id === state.activeModule) || NAV_ITEMS[0];
+      document.getElementById('topbar-title').textContent = cur.ko;
+      document.getElementById('topbar-sub').textContent = '· ' + cur.en;
+      const cta = document.getElementById('topbar-cta');
+      cta.textContent = state.activeModule === 'ai-lab' ? '연구 노트 보기' : 'AI 해결 연구실 열기';
+
+      document.getElementById('mobile-bottom-nav').innerHTML = NAV_ITEMS.filter(n => n.id !== 'home').map(item => `
+        <button type="button" class="mobile-tab ${state.activeModule === item.id ? 'active' : ''}" onclick="navigateTo('${item.id}')">
+          <span style="width:16px;height:16px;display:inline-flex;">${getNavIconSvg(item.id)}</span>
+          <span>${item.short}</span>
+        </button>
+      `).join('');
+    }
+
+    // =========================================================================
+    // 6. MODULE RENDERERS
+    // =========================================================================
+    function renderHome() {
+      const recent = state.projects.slice(0, 3);
+      return `
+        <div class="section-gap">
+          <section class="hero-grid">
+            <div class="hero-main">
+              <div>
+                <div style="font-size:12px;color:#6EE7B7;font-weight:500;">EcoLab · Explore. Analyze. Innovate.</div>
+                <h2 class="hero-title">환경 문제를 과학으로 읽고,<br/>데이터와 소재로 해법을 설계하다</h2>
+                <p class="hero-desc">문제 발견부터 데이터 시각화, 친환경 소재 비교, AI 기반 6단계 솔루션 도출, 연구 노트 기록까지 하나의 과학적 탐구 흐름으로 연결합니다.</p>
+              </div>
+              <form class="hero-form" onsubmit="event.preventDefault(); const v=document.getElementById('quick-ai').value.trim(); if(v) state.aiQuery=v; navigateTo('ai-lab');">
+                <input id="quick-ai" class="hero-input" type="text" placeholder="예: 수중 미세플라스틱 제거에 바이오차와 활성탄 중 무엇이 유리할까요?" />
+                <button type="submit" class="btn btn-emerald">AI 탐구 시작 →</button>
+              </form>
+            </div>
+            <div class="hero-visual">
+              ${renderHeroSvg()}
+              <div class="hero-visual-caption">
+                <div style="font-size:11.5px;color:#6EE7B7;">통합 과학 탐구 사이클</div>
+                <div style="font-size:13.5px;font-weight:600;margin-top:4px;">문제 탐색 → 데이터 분석 → 소재 비교 → AI 해결안 → 연구 기록</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 20px;">
+            <div style="min-width:240px;flex:1;">
+              <div style="font-size:14px;font-weight:700;color:#0F172A;">GitHub · Vercel 배포용 단일 HTML 내보내기</div>
+              <p class="meta-text" style="margin-top:4px;line-height:1.5;">별도 프레임워크나 빌드 없이 <span class="mono">index.html</span> 파일 하나만으로 GitHub 업로드 후 Vercel 즉시 배포 및 브라우저 직접 실행(file://)이 가능합니다.</p>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="downloadStandaloneIndexHtml()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>index.html 다운로드</span>
+            </button>
+          </section>
+
+          <section>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
+              <h3 style="font-size:17px;font-weight:700;">핵심 연구 모듈</h3>
+              <span class="meta-text">5개 기능 유기적 연계</span>
+            </div>
+            <div class="grid-5">
+              ${[
+                { id: 'explorer', n: '01', ko: '환경 문제 탐색실', en: 'Environment Explorer', d: '기후·대기·수질·폐기물·에너지 5대 분야의 과학 원리와 기술을 탐색합니다.' },
+                { id: 'data-lab', n: '02', ko: '환경 데이터 분석실', en: 'Data Lab', d: '시계열 그래프, 지표 비교, 기초 통계, CSV 업로드 및 AI 해석을 수행합니다.' },
+                { id: 'materials', n: '03', ko: '친환경 소재 탐색실', en: 'Material Library', d: '그래핀·CNT·제올라이트·바이오차·활성탄·실리카겔 물성과 적합성을 비교합니다.' },
+                { id: 'ai-lab', n: '04', ko: 'AI 문제 해결 연구실', en: 'AI Solution Lab', d: '6단계 과학 분석, 장단점 비교, 추가 실험 아이디어를 구조화합니다.' },
+                { id: 'notebook', n: '05', ko: '나만의 연구 노트', en: 'Research Notebook', d: '탐구 질문, 데이터·소재·AI 결과를 프로젝트로 영구 저장합니다.' }
+              ].map(m => `
+                <button type="button" class="list-item" style="display:flex;flex-direction:column;justify-content:space-between;" onclick="navigateTo('${m.id}')">
+                  <div>
+                    <div class="mono" style="font-size:11.5px;color:#64748B;">${m.n}</div>
+                    <div style="font-size:14px;font-weight:700;margin-top:8px;color:#0F172A;">${m.ko}</div>
+                    <div style="font-size:11px;color:#64748B;margin-top:2px;">${m.en}</div>
+                    <p style="font-size:12px;color:#475569;margin-top:10px;line-height:1.5;">${m.d}</p>
+                  </div>
+                  <div style="margin-top:14px;font-size:12px;font-weight:600;color:#064E3B;">열기 →</div>
+                </button>
+              `).join('')}
+            </div>
+          </section>
+
+          <section class="grid-2">
+            <div class="card">
+              <h3 style="font-size:15px;font-weight:700;">주요 환경 탐구 분야</h3>
+              <p class="meta-text" style="margin-top:4px;">관심 분야를 선택해 과학적 원리와 해결 소재를 살펴보세요.</p>
+              <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+                ${Object.keys(ENV_CATEGORY_LABELS).map(cat => {
+                  const topic = ENVIRONMENT_TOPICS.find(t => t.category === cat);
+                  return `
+                    <button type="button" class="list-item" style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;" onclick="state.explorerCategory='${cat}'; state.activeTopicId='${topic.id}'; navigateTo('explorer');">
+                      <div style="min-width:0;">
+                        <div style="font-size:13.5px;font-weight:600;color:#0F172A;">${ENV_CATEGORY_LABELS[cat]}</div>
+                        <div class="meta-text" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(topic.title)}</div>
+                      </div>
+                      <span style="color:#64748B;">→</span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 style="font-size:15px;font-weight:700;">추천 탐구 주제</h3>
+              <p class="meta-text" style="margin-top:4px;">주제 · 데이터 · 소재 · AI 프롬프트가 미리 연결된 가이드 미션입니다.</p>
+              <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">
+                ${CURATED_MISSIONS.map(ms => `
+                  <div class="card" style="padding:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:200px;">
+                      <div class="meta-text">${ENV_CATEGORY_LABELS[ms.category]} · 소재 ${ms.materialIds.length}종 연계</div>
+                      <div style="font-size:13.5px;font-weight:600;margin-top:4px;">${escapeHtml(ms.title)}</div>
+                      <div style="font-size:12px;color:#475569;margin-top:4px;">${escapeHtml(ms.subtitle)}</div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="launchMission('${ms.id}')">탐구 시작</button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+              <div>
+                <h3 style="font-size:15px;font-weight:700;">최근 연구 기록</h3>
+                <p class="meta-text" style="margin-top:4px;">Research Notebook에 저장된 기록은 브라우저를 다시 열어도 유지됩니다.</p>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="navigateTo('notebook')">전체 노트 보기</button>
+            </div>
+            ${recent.length === 0 ? `
+              <div style="margin-top:16px;border:1px dashed #CBD5E1;border-radius:10px;padding:24px;text-align:center;background:#F8FAFC;">
+                <div style="font-size:13.5px;font-weight:600;color:#334155;">아직 저장된 연구 기록이 없습니다.</div>
+                <p class="meta-text" style="margin-top:4px;">새 연구 프로젝트를 만들거나 예시 연구 노트를 불러와 체험해 보세요.</p>
+                <div style="margin-top:14px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+                  <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('notebook')">연구 노트 열기</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="loadSampleProject(); navigateTo('notebook');">예시 연구 노트 불러오기</button>
+                </div>
+              </div>
+            ` : `
+              <div class="grid-3" style="margin-top:16px;">
+                ${recent.map(p => `
+                  <button type="button" class="list-item" onclick="state.activeProjectId='${p.id}'; navigateTo('notebook');">
+                    <div class="meta-text">${p.categories.map(c => ENV_CATEGORY_LABELS[c]).join(', ')} · 기록 ${p.entries.length}건</div>
+                    <div style="font-size:14px;font-weight:600;margin-top:6px;color:#0F172A;">${escapeHtml(p.title)}</div>
+                    <div class="sub-text">${escapeHtml(p.description || '(설명 없음)')}</div>
+                    <div class="mono meta-text" style="margin-top:10px;">수정: ${new Date(p.updatedAt).toLocaleDateString('ko-KR')}</div>
+                  </button>
+                `).join('')}
+              </div>
+            `}
+          </section>
+        </div>
+      `;
+    }
+
+    function launchMission(missionId) {
+      const m = CURATED_MISSIONS.find(x => x.id === missionId);
+      if (!m) return;
+      state.activeTopicId = m.topicId;
+      state.activeDatasetId = m.datasetId;
+      state.comparedMaterialIds = [...m.materialIds];
+      state.activeCondition = m.condition;
+      state.aiQuery = m.aiStarterPrompt;
+      navigateTo('explorer');
+    }
+
+    // -------------------------------------------------------------------------
+    // MODULE 1: ENVIRONMENT EXPLORER
+    // -------------------------------------------------------------------------
+    function renderExplorer() {
+      const q = state.explorerSearch.trim().toLowerCase();
+      const filtered = ENVIRONMENT_TOPICS.filter(t => {
+        if (state.explorerCategory !== 'all' && t.category !== state.explorerCategory) return false;
+        if (!q) return true;
+        return (t.title + ' ' + t.subtitle + ' ' + t.conceptAndCauses).toLowerCase().includes(q);
+      });
+
+      const selected = filtered.find(t => t.id === state.activeTopicId) || filtered[0] || null;
+
+      return `
+        <div class="section-gap">
+          <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
+            <div class="filter-bar">
+              <button type="button" class="filter-btn ${state.explorerCategory === 'all' ? 'active' : ''}" onclick="state.explorerCategory='all'; renderApp();">전체 분야</button>
+              ${Object.keys(ENV_CATEGORY_LABELS).map(cat => `
+                <button type="button" class="filter-btn ${state.explorerCategory === cat ? 'active' : ''}" onclick="state.explorerCategory='${cat}'; renderApp();">${ENV_CATEGORY_LABELS[cat]}</button>
+              `).join('')}
+            </div>
+            <input type="search" class="input" style="max-width:260px;" placeholder="환경 문제, 과학 원리 검색..." value="${escapeHtml(state.explorerSearch)}" oninput="state.explorerSearch=this.value; renderExplorerKeepFocus(this);" />
+          </div>
+
+          ${filtered.length === 0 ? `
+            <div class="card" style="text-align:center;padding:40px;">
+              <div style="font-size:14px;font-weight:600;">검색 조건과 일치하는 환경 주제가 없습니다.</div>
+              <button type="button" class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="state.explorerCategory='all'; state.explorerSearch=''; renderApp();">필터 초기화</button>
+            </div>
+          ` : `
+            <div class="split-layout">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                ${filtered.map(t => `
+                  <button type="button" class="list-item ${selected && selected.id === t.id ? 'active' : ''}" onclick="state.activeTopicId='${t.id}'; renderApp();">
+                    <div class="meta-text">${ENV_CATEGORY_LABELS[t.category]} · ${escapeHtml(t.severityLabel)}</div>
+                    <div style="font-size:14px;font-weight:600;margin-top:6px;">${escapeHtml(t.title)}</div>
+                    <div class="sub-text">${escapeHtml(t.subtitle)}</div>
+                    <div class="meta-text" style="margin-top:10px;">연관 소재 ${t.relatedMaterialIds.length}종 · 탐구 질문 ${t.inquiryQuestions.length}개</div>
+                  </button>
+                `).join('')}
+              </div>
+
+              ${selected ? `
+                <article class="card section-gap" style="padding:28px;">
+                  <header style="border-bottom:1px solid #F1F5F9;padding-bottom:20px;">
+                    <div style="font-size:12px;font-weight:600;color:#064E3B;">${ENV_CATEGORY_LABELS[selected.category]} · ${escapeHtml(selected.severityLabel)}</div>
+                    <h2 style="font-size:22px;font-weight:700;margin-top:8px;">${escapeHtml(selected.title)}</h2>
+                    <p style="font-size:13.5px;color:#475569;margin-top:8px;">${escapeHtml(selected.subtitle)}</p>
+                    <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;">
+                      <button type="button" class="btn btn-primary btn-sm" onclick="state.activeTopicId='${selected.id}'; state.activeDatasetId='${selected.relatedDatasetIds[0]}'; state.dataSourceMode='builtin'; state.startIdx=0; state.endIdx=999; navigateTo('data-lab');">Data Lab에서 데이터 보기</button>
+                      <button type="button" class="btn btn-secondary btn-sm" onclick="state.activeTopicId='${selected.id}'; state.comparedMaterialIds=${JSON.stringify(selected.relatedMaterialIds.slice(0,4)).replace(/"/g, "'")}; state.materialViewMode='explore'; navigateTo('materials');">관련 친환경 소재 탐색</button>
+                      <button type="button" class="btn btn-secondary btn-sm" onclick="state.activeTopicId='${selected.id}'; state.aiQuery='&quot;${escapeHtml(selected.title)}&quot; 문제의 과학적 원리를 바탕으로 활용 가능한 친환경 소재와 해결 방안을 비교 분석해 주세요.'; navigateTo('ai-lab');">AI 해결 방안 탐색</button>
+                      <button type="button" class="btn btn-secondary btn-sm" onclick="saveTopicToNotebook('${selected.id}')">노트에 저장</button>
+                    </div>
+                  </header>
+
+                  <section>
+                    <h3 style="font-size:14px;font-weight:700;">1. 환경 문제의 개념과 발생 원인</h3>
+                    <p style="font-size:13.5px;color:#334155;margin-top:8px;line-height:1.7;">${escapeHtml(selected.conceptAndCauses)}</p>
+                  </section>
+
+                  <section>
+                    <h3 style="font-size:14px;font-weight:700;">2. 관련 과학적 원리</h3>
+                    <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px;">
+                      ${selected.scientificPrinciples.map(p => `
+                        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px;">
+                          <div style="font-size:13.5px;font-weight:600;color:#064E3B;">${escapeHtml(p.title)}</div>
+                          <p style="font-size:13px;color:#334155;margin-top:6px;line-height:1.6;">${escapeHtml(p.description)}</p>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </section>
+
+                  <section>
+                    <h3 style="font-size:14px;font-weight:700;">3. 환경 및 생태계에 미치는 영향</h3>
+                    <ul style="margin:10px 0 0 18px;padding:0;font-size:13.5px;color:#334155;line-height:1.7;">
+                      ${selected.ecologicalImpacts.map(i => `<li>${escapeHtml(i)}</li>`).join('')}
+                    </ul>
+                  </section>
+
+                  <section>
+                    <h3 style="font-size:14px;font-weight:700;">4. 현재 활용되는 해결 기술</h3>
+                    <div class="grid-2" style="margin-top:10px;">
+                      ${selected.currentTechnologies.map(tech => `
+                        <div class="card" style="padding:14px;">
+                          <div class="meta-text">${escapeHtml(tech.stage)}</div>
+                          <div style="font-size:13.5px;font-weight:600;margin-top:4px;">${escapeHtml(tech.name)}</div>
+                          <p style="font-size:12.5px;color:#475569;margin-top:6px;">${escapeHtml(tech.summary)}</p>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </section>
+
+                  <section>
+                    <h3 style="font-size:14px;font-weight:700;">5. 관련 친환경 소재</h3>
+                    <div class="grid-2" style="margin-top:10px;">
+                      ${selected.relatedMaterialIds.map(mid => {
+                        const mat = ECO_MATERIALS.find(m => m.id === mid);
+                        if (!mat) return '';
+                        return `
+                          <button type="button" class="list-item" style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;" onclick="state.detailMaterialId='${mat.id}'; state.materialViewMode='explore'; navigateTo('materials');">
+                            <div style="min-width:0;">
+                              <div style="font-size:13.5px;font-weight:600;">${escapeHtml(mat.nameKo)} (${escapeHtml(mat.nameEn)})</div>
+                              <div class="meta-text" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(mat.summary)}</div>
+                            </div>
+                            <span>→</span>
+                          </button>
+                        `;
+                      }).join('')}
+                    </div>
+                  </section>
+
+                  <section>
+                    <h3 style="font-size:14px;font-weight:700;">6. 추가 탐구 질문</h3>
+                    <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+                      ${selected.inquiryQuestions.map((qText, idx) => `
+                        <div class="card" style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                          <span style="font-size:13px;color:#334155;flex:1;">· ${escapeHtml(qText)}</span>
+                          <button type="button" class="btn btn-secondary btn-sm" onclick="askTopicQuestionInAi('${selected.id}', ${idx})">AI로 탐구하기</button>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </section>
+
+                  <footer style="border-top:1px solid #F1F5F9;padding-top:14px;font-size:12px;color:#64748B;">
+                    <div style="font-weight:600;color:#334155;margin-bottom:4px;">참고 개념 및 출처</div>
+                    ${selected.references.map(r => `<div>· ${escapeHtml(r)}</div>`).join('')}
+                  </footer>
+                </article>
+              ` : ''}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function renderExplorerKeepFocus(inputEl) {
+      const pos = inputEl.selectionStart;
+      renderApp();
+      const el = document.querySelector('#app-content input[type="search"]');
+      if (el) { el.focus(); el.setSelectionRange(pos, pos); }
+    }
+
+    function askTopicQuestionInAi(topicId, qIdx) {
+      const topic = ENVIRONMENT_TOPICS.find(t => t.id === topicId);
+      if (!topic) return;
+      state.activeTopicId = topic.id;
+      state.aiQuery = topic.inquiryQuestions[qIdx] || '';
+      navigateTo('ai-lab');
+    }
+
+    // -------------------------------------------------------------------------
+    // MODULE 2: DATA LAB (CHARTS, STATS, CSV UPLOAD, AI INTERPRETATION)
+    // -------------------------------------------------------------------------
+    function getDataLabContext() {
+      if (state.dataSourceMode === 'csv' && state.csvParsed && state.csvYCol) {
+        const rawPts = [];
+        state.csvParsed.rows.forEach(r => {
+          const v = Number((r[state.csvYCol] || '').replace(/,/g, ''));
+          if (!Number.isFinite(v)) return;
+          const sv = state.csvCompareCol !== 'none' ? Number((r[state.csvCompareCol] || '').replace(/,/g, '')) : NaN;
+          rawPts.push({ label: r[state.csvXCol] || `#${rawPts.length+1}`, value: v, secondaryValue: Number.isFinite(sv) ? sv : undefined });
+        });
+        const sIdx = Math.max(0, Math.min(state.startIdx, Math.max(0, rawPts.length - 2)));
+        const eIdx = Math.min(rawPts.length - 1, Math.max(sIdx + 1, state.endIdx));
+        return {
+          points: rawPts.slice(sIdx, eIdx + 1),
+          allLabels: rawPts.map(p => p.label),
+          title: state.csvYCol,
+          unit: '단위(CSV)',
+          secTitle: state.csvCompareCol !== 'none' ? state.csvCompareCol : null,
+          secUnit: '단위(CSV)',
+          reliability: 'user_csv',
+          sourceName: `사용자 업로드 CSV (${state.csvFileName})`,
+          description: `업로드된 CSV에서 ${rawPts.length}행 중 ${eIdx - sIdx + 1}개 구간을 분석 중입니다.`
+        };
+      }
+      const ds = ENVIRONMENTAL_DATASETS.find(d => d.id === state.activeDatasetId) || ENVIRONMENTAL_DATASETS[0];
+      const comp = state.compareDatasetId !== 'none' ? ENVIRONMENTAL_DATASETS.find(d => d.id === state.compareDatasetId) : null;
+      const sIdx = Math.max(0, Math.min(state.startIdx, Math.max(0, ds.points.length - 2)));
+      const eIdx = Math.min(ds.points.length - 1, Math.max(sIdx + 1, state.endIdx));
+      const sliced = ds.points.slice(sIdx, eIdx + 1).map(p => {
+        if (!comp) return { ...p };
+        const m = comp.points.find(cp => cp.label === p.label);
+        return { ...p, secondaryValue: m ? m.value : undefined };
+      });
+      return {
+        points: sliced,
+        allLabels: ds.points.map(p => p.label),
+        title: ds.title,
+        unit: ds.unit,
+        secTitle: comp ? comp.title : null,
+        secUnit: comp ? comp.unit : null,
+        reliability: ds.reliability,
+        sourceName: ds.sourceName,
+        description: ds.description
+      };
+    }
+
+    function renderSvgChart(ctx) {
+      const pts = ctx.points;
+      if (!pts || pts.length < 2) return '<div style="padding:40px;text-align:center;color:#64748B;">표시할 데이터가 부족합니다.</div>';
+      const hasSec = pts.some(p => typeof p.secondaryValue === 'number' && Number.isFinite(p.secondaryValue));
+      const W = 780, H = 310, padL = 56, padR = (hasSec && !state.normalizeCompare) ? 56 : 24, padT = 20, padB = 40;
+      const plotW = W - padL - padR, plotH = H - padT - padB;
+
+      const vals = pts.map(p => p.value);
+      let pMin = Math.min(...vals), pMax = Math.max(...vals);
+      const rawPMin = pMin, rawPMax = pMax;
+      if (pMin === pMax) { pMin -= 1; pMax += 1; }
+      else { const m = (pMax - pMin) * 0.12; pMin = (state.chartType === 'bar' && pMin >= 0) ? 0 : pMin - m; pMax += m; }
+
+      const sVals = pts.map(p => p.secondaryValue).filter(v => typeof v === 'number');
+      let sMin = sVals.length ? Math.min(...sVals) : 0, sMax = sVals.length ? Math.max(...sVals) : 1;
+      const rawSMin = sMin, rawSMax = sMax;
+      if (sMin === sMax) { sMin -= 1; sMax += 1; }
+      else { const m2 = (sMax - sMin) * 0.12; sMin = (state.chartType === 'bar' && sMin >= 0) ? 0 : sMin - m2; sMax += m2; }
+
+      const getX = idx => state.chartType === 'bar' ? padL + (plotW / pts.length) * idx + (plotW / pts.length) / 2 : padL + (idx / (pts.length - 1)) * plotW;
+      const getY1 = v => state.normalizeCompare ? padT + (1 - (v - rawPMin) / (rawPMax - rawPMin || 1)) * plotH : padT + (1 - (v - pMin) / (pMax - pMin || 1)) * plotH;
+      const getY2 = v => state.normalizeCompare ? padT + (1 - (v - rawSMin) / (rawSMax - rawSMin || 1)) * plotH : padT + (1 - (v - sMin) / (sMax - sMin || 1)) * plotH;
+
+      const ticks = [0, 0.25, 0.5, 0.75, 1];
+      const step = Math.max(1, Math.ceil(pts.length / 7));
+
+      let shapes = '';
+      if (state.chartType === 'bar') {
+        const slot = plotW / pts.length;
+        const bw = Math.min(34, slot * 0.65);
+        const sw = hasSec ? bw * 0.46 : bw;
+        shapes = pts.map((p, i) => {
+          const x1 = getX(i) - (hasSec ? bw / 2 : sw / 2);
+          const y1 = getY1(p.value), h1 = Math.max(2, padT + plotH - y1);
+          let secRect = '';
+          if (hasSec && typeof p.secondaryValue === 'number') {
+            const y2 = getY2(p.secondaryValue), h2 = Math.max(2, padT + plotH - y2);
+            secRect = `<rect x="${x1 + sw + 2}" y="${y2}" width="${sw}" height="${h2}" rx="2" fill="#D97706"/>`;
+          }
+          return `<rect x="${x1}" y="${y1}" width="${sw}" height="${h1}" rx="2" fill="#065F46"/>${secRect}`;
+        }).join('');
+      } else {
+        const d1 = pts.map((p, i) => `${i===0?'M':'L'} ${getX(i).toFixed(1)} ${getY1(p.value).toFixed(1)}`).join(' ');
+        let d2 = '';
+        if (hasSec) {
+          pts.forEach((p, i) => {
+            if (typeof p.secondaryValue !== 'number') return;
+            d2 += `${d2 === '' ? 'M' : 'L'} ${getX(i).toFixed(1)} ${getY2(p.secondaryValue).toFixed(1)} `;
+          });
+        }
+        const dots = pts.map((p, i) => {
+          let sDot = '';
+          if (hasSec && typeof p.secondaryValue === 'number') {
+            sDot = `<circle cx="${getX(i)}" cy="${getY2(p.secondaryValue)}" r="3.5" fill="#D97706" stroke="#fff" stroke-width="1.5"/>`;
+          }
+          return `<circle cx="${getX(i)}" cy="${getY1(p.value)}" r="3.5" fill="#065F46" stroke="#fff" stroke-width="1.5"/>${sDot}`;
+        }).join('');
+        shapes = `<path d="${d1}" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  ${d2 ? `<path d="${d2}" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round"/>` : ''}
+                  ${dots}`;
+      }
+
+      return `
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;font-size:12px;">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <span><span style="display:inline-block;width:16px;height:4px;background:#065F46;vertical-align:middle;margin-right:6px;"></span><strong>${escapeHtml(ctx.title)}</strong> (${state.normalizeCompare ? '0–100 정규화' : escapeHtml(ctx.unit)})</span>
+            ${hasSec && ctx.secTitle ? `<span><span style="display:inline-block;width:16px;border-top:2px dashed #D97706;vertical-align:middle;margin-right:6px;"></span><strong>${escapeHtml(ctx.secTitle)}</strong> (${state.normalizeCompare ? '0–100 정규화' : escapeHtml(ctx.secUnit)})</span>` : ''}
+          </div>
+          <div id="chart-hover-hud" class="mono" style="background:#F1F5F9;padding:4px 10px;border-radius:6px;color:#334155;">그래프 위에 마우스를 올리면 수치가 표시됩니다</div>
+        </div>
+        <svg id="ecolab-chart-svg" viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;cursor:crosshair;display:block;" onmousemove="handleChartHover(event)" onmouseleave="document.getElementById('chart-crosshair').style.display='none';">
+          ${ticks.map(t => {
+            const y = padT + (1 - t) * plotH;
+            const v1 = state.normalizeCompare ? t * 100 : pMin + t * (pMax - pMin);
+            const v2 = state.normalizeCompare ? t * 100 : sMin + t * (sMax - sMin);
+            return `
+              <line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#E2E8F0" stroke-width="1"/>
+              <text x="${padL - 8}" y="${y + 4}" text-anchor="end" fill="#64748B" font-size="10" font-family="monospace">${state.normalizeCompare ? Math.round(v1) + '%' : fmtNum(v1, 1)}</text>
+              ${hasSec && !state.normalizeCompare ? `<text x="${W - padR + 8}" y="${y + 4}" text-anchor="start" fill="#B45309" font-size="10" font-family="monospace">${fmtNum(v2, 1)}</text>` : ''}
+            `;
+          }).join('')}
+          <line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="#CBD5E1" stroke-width="1"/>
+          ${pts.map((p, i) => (i % step === 0 || i === pts.length - 1) ? `<text x="${getX(i)}" y="${padT + plotH + 20}" text-anchor="middle" fill="#64748B" font-size="10" font-family="monospace">${escapeHtml(String(p.label).slice(0,10))}</text>` : '').join('')}
+          ${shapes}
+          <line id="chart-crosshair" x1="0" y1="${padT}" x2="0" y2="${padT + plotH}" stroke="#0F172A" stroke-opacity="0.3" stroke-dasharray="3 3" style="display:none;"/>
+        </svg>
+      `;
+    }
+
+    function handleChartHover(e) {
+      const ctx = getDataLabContext();
+      const pts = ctx.points;
+      if (!pts || pts.length < 2) return;
+      const svg = document.getElementById('ecolab-chart-svg');
+      const rect = svg.getBoundingClientRect();
+      const hasSec = pts.some(p => typeof p.secondaryValue === 'number');
+      const W = 780, padL = 56, padR = (hasSec && !state.normalizeCompare) ? 56 : 24, plotW = W - padL - padR;
+      const relX = ((e.clientX - rect.left) / rect.width) * W;
+      const getX = idx => state.chartType === 'bar' ? padL + (plotW / pts.length) * idx + (plotW / pts.length) / 2 : padL + (idx / (pts.length - 1)) * plotW;
+      let bestIdx = 0, bestD = Infinity;
+      pts.forEach((_, idx) => { const d = Math.abs(getX(idx) - relX); if (d < bestD) { bestD = d; bestIdx = idx; } });
+      const pt = pts[bestIdx];
+      const line = document.getElementById('chart-crosshair');
+      line.setAttribute('x1', getX(bestIdx));
+      line.setAttribute('x2', getX(bestIdx));
+      line.style.display = 'block';
+      const hud = document.getElementById('chart-hover-hud');
+      hud.innerHTML = `<strong>${escapeHtml(pt.label)}</strong> · <span style="color:#065F46;font-weight:600;">${fmtNum(pt.value)} ${escapeHtml(ctx.unit)}</span>${typeof pt.secondaryValue === 'number' ? ` · <span style="color:#B45309;font-weight:600;">${fmtNum(pt.secondaryValue)} ${escapeHtml(ctx.secUnit)}</span>` : ''}`;
+    }
+
+    function renderDataLab() {
+      const ctx = getDataLabContext();
+      const stats = calculateStats(ctx.points);
+      const showChartArea = state.dataSourceMode === 'builtin' || state.csvParsed;
+
+      return `
+        <div class="section-gap">
+          <div class="card section-gap" style="gap:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+              <div class="segmented">
+                <button type="button" class="seg-btn ${state.dataSourceMode === 'builtin' ? 'active' : ''}" onclick="state.dataSourceMode='builtin'; state.startIdx=0; state.endIdx=999; renderApp();">내장 환경 데이터셋</button>
+                <button type="button" class="seg-btn ${state.dataSourceMode === 'csv' ? 'active' : ''}" onclick="state.dataSourceMode='csv'; state.startIdx=0; state.endIdx=999; renderApp();">내 CSV 파일 분석</button>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="downloadSampleCsv()">테스트용 샘플 CSV 내려받기</button>
+            </div>
+
+            ${state.dataSourceMode === 'builtin' ? `
+              <div class="grid-3">
+                ${ENVIRONMENTAL_DATASETS.map(ds => {
+                  const active = ds.id === state.activeDatasetId;
+                  return `
+                    <button type="button" class="list-item ${active ? 'active' : ''}" style="padding:14px;" onclick="state.activeDatasetId='${ds.id}'; state.startIdx=0; state.endIdx=999; state.dataAiStatus='idle'; state.dataAiResult=null; renderApp();">
+                      <div style="display:flex;justify-content:space-between;font-size:11px;">
+                        <span class="meta-text">${ENV_CATEGORY_LABELS[ds.category]}</span>
+                        <span style="font-weight:600;color:${ds.reliability==='sample_demo' ? (active?'#FCD34D':'#B45309') : (active?'#6EE7B7':'#065F46')};">${ds.reliability==='sample_demo'?'예시 데이터':'참고 통계'}</span>
+                      </div>
+                      <div style="font-size:12.5px;font-weight:600;margin-top:6px;">${escapeHtml(ds.title)}</div>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            ` : `
+              <div style="border:1px dashed #CBD5E1;border-radius:10px;background:#F8FAFC;padding:18px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                  <div>
+                    <div style="font-size:13.5px;font-weight:600;">CSV 파일 업로드</div>
+                    <div class="meta-text" style="margin-top:2px;">첫 행이 컬럼명인 UTF-8 CSV 파일을 선택하세요 (최대 5MB).</div>
+                  </div>
+                  <label class="btn btn-primary btn-sm" style="cursor:pointer;">
+                    CSV 파일 선택
+                    <input type="file" accept=".csv,text/csv" style="display:none;" onchange="handleCsvUpload(event)"/>
+                  </label>
+                </div>
+                ${state.csvError ? `<div class="banner banner-error" style="margin-top:12px;">${escapeHtml(state.csvError)}</div>` : ''}
+                ${state.csvParsed ? `
+                  <div class="grid-3" style="margin-top:14px;padding-top:14px;border-top:1px solid #E2E8F0;">
+                    <div>
+                      <label class="meta-text">X축 (기간/범주)</label>
+                      <select class="select" style="margin-top:4px;" onchange="state.csvXCol=this.value; renderApp();">
+                        ${state.csvParsed.headers.map(h => `<option value="${escapeHtml(h)}" ${h===state.csvXCol?'selected':''}>${escapeHtml(h)}</option>`).join('')}
+                      </select>
+                    </div>
+                    <div>
+                      <label class="meta-text">주 Y축 (수치)</label>
+                      <select class="select" style="margin-top:4px;" onchange="state.csvYCol=this.value; renderApp();">
+                        ${state.csvParsed.numericColumns.map(h => `<option value="${escapeHtml(h)}" ${h===state.csvYCol?'selected':''}>${escapeHtml(h)}</option>`).join('')}
+                      </select>
+                    </div>
+                    <div>
+                      <label class="meta-text">비교 Y축 (선택)</label>
+                      <select class="select" style="margin-top:4px;" onchange="state.csvCompareCol=this.value; renderApp();">
+                        <option value="none">비교 안 함</option>
+                        ${state.csvParsed.numericColumns.filter(h => h !== state.csvYCol).map(h => `<option value="${escapeHtml(h)}" ${h===state.csvCompareCol?'selected':''}>${escapeHtml(h)}</option>`).join('')}
+                      </select>
+                    </div>
+                  </div>
+                ` : ''}
+              </div>
+            `}
+          </div>
+
+          ${showChartArea && ctx.points.length >= 2 ? `
+            <div class="banner ${ctx.reliability === 'sample_demo' ? 'banner-demo' : 'banner-verified'}">
+              <div>
+                <strong>${ctx.reliability === 'sample_demo' ? '[예시 데이터] 실제 관측값이 아닌 시연·학습용 가상 데이터입니다.' : ctx.reliability === 'user_csv' ? '[사용자 업로드 CSV]' : '[공공 통계/관측 참고 정적 데이터]'}</strong>
+                <span style="margin-left:6px;">출처: ${escapeHtml(ctx.sourceName)}</span>
+              </div>
+              <span class="mono">단위: ${escapeHtml(ctx.unit)}</span>
+            </div>
+
+            <div class="grid-4">
+              <div class="card"><div class="meta-text">기간 평균</div><div class="mono" style="font-size:22px;font-weight:700;margin-top:6px;">${fmtNum(stats.mean)} <span style="font-size:12px;font-weight:400;color:#64748B;">${escapeHtml(ctx.unit)}</span></div></div>
+              <div class="card"><div class="meta-text">최댓값 (${escapeHtml(stats.max.label)})</div><div class="mono" style="font-size:22px;font-weight:700;margin-top:6px;">${fmtNum(stats.max.value)} <span style="font-size:12px;font-weight:400;color:#64748B;">${escapeHtml(ctx.unit)}</span></div></div>
+              <div class="card"><div class="meta-text">최솟값 (${escapeHtml(stats.min.label)})</div><div class="mono" style="font-size:22px;font-weight:700;margin-top:6px;">${fmtNum(stats.min.value)} <span style="font-size:12px;font-weight:400;color:#64748B;">${escapeHtml(ctx.unit)}</span></div></div>
+              <div class="card">
+                <div class="meta-text">구간 내 변화율</div>
+                <div class="mono" style="font-size:22px;font-weight:700;margin-top:6px;color:#064E3B;">${stats.changeRatePercent === null ? 'N/A' : (stats.changeRatePercent>=0?'+':'') + stats.changeRatePercent.toFixed(1) + '%'}</div>
+                <div class="mono meta-text">변화량: ${stats.absoluteChange>=0?'+':''}${fmtNum(stats.absoluteChange)} ${escapeHtml(ctx.unit)}</div>
+              </div>
+            </div>
+
+            <div class="card section-gap" style="gap:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;border-bottom:1px solid #F1F5F9;padding-bottom:14px;">
+                <div>
+                  <h3 style="font-size:16px;font-weight:700;">${escapeHtml(ctx.title)}</h3>
+                  <p class="meta-text" style="margin-top:4px;">${escapeHtml(ctx.description)}</p>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                  <select class="select mono" style="width:auto;padding:5px 8px;font-size:12px;" aria-label="시작 시점" onchange="state.startIdx=Number(this.value); renderApp();">
+                    ${ctx.allLabels.slice(0,-1).map((l, idx) => `<option value="${idx}" ${idx===Math.min(state.startIdx, ctx.allLabels.length-2)?'selected':''}>${escapeHtml(l)}</option>`).join('')}
+                  </select>
+                  <span class="meta-text">~</span>
+                  <select class="select mono" style="width:auto;padding:5px 8px;font-size:12px;" aria-label="종료 시점" onchange="state.endIdx=Number(this.value); renderApp();">
+                    ${ctx.allLabels.map((l, idx) => idx > state.startIdx ? `<option value="${idx}" ${idx===Math.min(state.endIdx, ctx.allLabels.length-1)?'selected':''}>${escapeHtml(l)}</option>` : '').join('')}
+                  </select>
+                  ${state.dataSourceMode === 'builtin' ? `
+                    <select class="select" style="width:auto;max-width:190px;padding:5px 8px;font-size:12px;" onchange="state.compareDatasetId=this.value; renderApp();">
+                      <option value="none">다른 데이터 비교 안 함</option>
+                      ${ENVIRONMENTAL_DATASETS.filter(d => d.id !== state.activeDatasetId).map(d => `<option value="${d.id}" ${d.id===state.compareDatasetId?'selected':''}>비교: ${escapeHtml(d.title)}</option>`).join('')}
+                    </select>
+                  ` : ''}
+                  <div class="segmented">
+                    <button type="button" class="seg-btn ${state.chartType==='line'?'active':''}" onclick="state.chartType='line'; renderApp();">선형</button>
+                    <button type="button" class="seg-btn ${state.chartType==='bar'?'active':''}" onclick="state.chartType='bar'; renderApp();">막대</button>
+                  </div>
+                  ${ctx.secTitle ? `<button type="button" class="btn btn-secondary btn-sm" onclick="state.normalizeCompare=!state.normalizeCompare; renderApp();">${state.normalizeCompare ? '0–100 정규화 중' : '이중 Y축 비교'}</button>` : ''}
+                </div>
+              </div>
+
+              ${renderSvgChart(ctx)}
+
+              ${stats.correlation !== null && ctx.secTitle ? `
+                <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px;font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                  <span>두 지표 피어슨 상관계수(r): <strong class="mono">${stats.correlation.toFixed(3)}</strong></span>
+                  <span class="meta-text">상관계수는 선형 경향 일치도를 의미하며 인과관계와 구분됩니다.</span>
+                </div>
+              ` : ''}
+
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-top:1px solid #F1F5F9;padding-top:12px;">
+                <button type="button" style="background:none;border:none;padding:0;font-size:12.5px;color:#475569;text-decoration:underline;" onclick="state.showDataTable=!state.showDataTable; renderApp();">
+                  ${state.showDataTable ? '원본 데이터 표 접기' : `원본 데이터 표 보기 (${ctx.points.length}행)`}
+                </button>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="saveDataToNotebook()">분석 결과 노트에 저장</button>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="connectDataToAiLab()">AI 해결 방안으로 연결</button>
+                </div>
+              </div>
+
+              ${state.showDataTable ? `
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>구간/라벨</th>
+                        <th style="text-align:right;">${escapeHtml(ctx.title)} (${escapeHtml(ctx.unit)})</th>
+                        ${ctx.secTitle ? `<th style="text-align:right;">${escapeHtml(ctx.secTitle)} (${escapeHtml(ctx.secUnit)})</th>` : ''}
+                      </tr>
+                    </thead>
+                    <tbody class="mono">
+                      ${ctx.points.map(p => `
+                        <tr>
+                          <td>${escapeHtml(p.label)}</td>
+                          <td style="text-align:right;font-weight:600;">${fmtNum(p.value)}</td>
+                          ${ctx.secTitle ? `<td style="text-align:right;color:#B45309;">${typeof p.secondaryValue==='number' ? fmtNum(p.secondaryValue) : '-'}</td>` : ''}
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <div>
+                  <h3 style="font-size:15px;font-weight:700;">AI 데이터 특징 및 경향 해석</h3>
+                  <p class="meta-text" style="margin-top:3px;">통계 요약과 시계열 변동을 바탕으로 AI가 경향성과 주의점을 해석합니다.</p>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" ${state.dataAiStatus==='loading'?'disabled':''} onclick="runDataAiInterpretation()">
+                  ${state.dataAiStatus==='loading' ? '데이터 해석 중...' : 'AI 데이터 경향 해석하기'}
+                </button>
+              </div>
+              ${state.dataAiStatus === 'error' ? `<div class="banner banner-error" style="margin-top:14px;"><span>${escapeHtml(state.dataAiError)}</span><button type="button" class="btn btn-secondary btn-sm" onclick="runDataAiInterpretation()">다시 시도</button></div>` : ''}
+              ${state.dataAiStatus === 'success' && state.dataAiResult ? `
+                <div class="grid-3" style="margin-top:16px;padding-top:16px;border-top:1px solid #F1F5F9;">
+                  <div style="background:#F8FAFC;padding:14px;border-radius:8px;">
+                    <div style="font-size:12px;font-weight:700;color:#064E3B;">핵심 변화 요약</div>
+                    <p style="font-size:12.5px;color:#334155;margin-top:8px;line-height:1.6;">${escapeHtml(state.dataAiResult.summary)}</p>
+                  </div>
+                  <div style="background:#F8FAFC;padding:14px;border-radius:8px;">
+                    <div style="font-size:12px;font-weight:700;color:#064E3B;">구간 경향 및 과학적 배경</div>
+                    <p style="font-size:12.5px;color:#334155;margin-top:8px;line-height:1.6;">${escapeHtml(state.dataAiResult.trendInterpretation)}</p>
+                    <p style="font-size:12px;color:#475569;margin-top:6px;">${escapeHtml(state.dataAiResult.scientificContext)}</p>
+                  </div>
+                  <div style="background:var(--amber-bg);border:1px solid var(--amber-border);padding:14px;border-radius:8px;">
+                    <div style="font-size:12px;font-weight:700;color:var(--amber-text);">해석 주의 및 검증 필요</div>
+                    <ul style="margin:8px 0 0 16px;padding:0;font-size:12px;color:var(--amber-text);line-height:1.6;">
+                      ${state.dataAiResult.cautions.map(c => `<li>${escapeHtml(c)}</li>`).join('')}
+                    </ul>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function handleCsvUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      state.csvError = null;
+      if (!file.name.toLowerCase().endsWith('.csv')) {
+        state.csvError = 'CSV 확장자(.csv) 파일만 업로드할 수 있습니다.';
+        renderApp(); return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        state.csvError = '파일 크기는 최대 5MB까지 지원합니다.';
+        renderApp(); return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = parseCsvText(String(reader.result || ''));
+          state.csvFileName = file.name;
+          state.csvParsed = parsed;
+          state.csvXCol = parsed.headers.find(h => !parsed.numericColumns.includes(h)) || parsed.headers[0];
+          state.csvYCol = parsed.numericColumns[0];
+          state.csvCompareCol = parsed.numericColumns.length > 1 ? parsed.numericColumns[1] : 'none';
+          state.startIdx = 0; state.endIdx = 999;
+          state.dataAiStatus = 'idle'; state.dataAiResult = null;
+        } catch (err) {
+          state.csvParsed = null;
+          state.csvError = err.message || 'CSV 파일을 읽을 수 없습니다.';
+        }
+        renderApp();
+      };
+      reader.readAsText(file, 'utf-8');
+    }
+
+    function downloadSampleCsv() {
+      const csv = [
+        '월,PM2.5_농도(ug/m3),평균기온(C)',
+        '2025-01,29.4,0.8','2025-02,27.1,2.4','2025-03,24.8,7.9','2025-04,20.2,13.6',
+        '2025-05,16.5,18.9','2025-06,13.4,23.2','2025-07,10.8,26.8','2025-08,11.2,27.5',
+        '2025-09,13.9,22.4','2025-10,17.6,15.8','2025-11,22.3,8.5','2025-12,26.8,2.1'
+      ].join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'ecolab_sample_pm25_temp.csv'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function runDataAiInterpretation() {
+      if (window.location.protocol === 'file:') {
+        state.dataAiStatus = 'error';
+        state.dataAiError = '로컬 파일(file://) 직접 실행 환경에서는 API 서버가 없어 실시간 AI 해석을 호출할 수 없습니다. (통계·그래프·CSV 분석은 정상 작동합니다.)';
+        renderApp(); return;
+      }
+      const ctx = getDataLabContext();
+      const stats = calculateStats(ctx.points);
+      state.dataAiStatus = 'loading';
+      state.dataAiError = null;
+      renderApp();
+
+      try {
+        const res = await fetch('/api/ai/analyze-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            datasetTitle: ctx.title,
+            unit: ctx.unit,
+            reliability: ctx.reliability,
+            sourceName: ctx.sourceName,
+            compareTitle: ctx.secTitle,
+            compareUnit: ctx.secUnit,
+            stats,
+            sampledPoints: ctx.points.slice(0, 40)
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'AI 서버 응답 오류');
+        state.dataAiResult = data;
+        state.dataAiStatus = 'success';
+      } catch (err) {
+        state.dataAiStatus = 'error';
+        state.dataAiError = '실시간 AI 서버와 연결되지 않았습니다. 정적 호스팅(file:// 또는 백엔드 미포함 환경)에서는 AI API 키 보호를 위해 클라이언트 단독 AI 호출을 차단하고 있습니다.';
+      }
+      renderApp();
+    }
+
+    function connectDataToAiLab() {
+      const ctx = getDataLabContext();
+      const stats = calculateStats(ctx.points);
+      state.dataSnapshot = {
+        datasetTitle: ctx.title,
+        unit: ctx.unit,
+        periodLabel: `${ctx.points[0].label} ~ ${ctx.points[ctx.points.length - 1].label}`,
+        stats
+      };
+      state.aiQuery = `"${ctx.title}" 데이터(${state.dataSnapshot.periodLabel}, 평균 ${fmtNum(stats.mean)} ${ctx.unit})의 변화 원인을 과학적으로 설명하고 개선을 위한 친환경 소재와 해결 방안을 제안해 주세요.`;
+      navigateTo('ai-lab');
+    }
+
+    // -------------------------------------------------------------------------
+    // MODULE 3: MATERIAL LIBRARY (6 MATERIALS + CONDITION COMPARISON)
+    // -------------------------------------------------------------------------
+    function renderMaterials() {
+      const q = state.materialSearch.trim().toLowerCase();
+      const filtered = ECO_MATERIALS.filter(m => {
+        if (state.materialDomain !== 'all' && !m.categoryTags.includes(state.materialDomain)) return false;
+        if (!q) return true;
+        return (m.nameKo + ' ' + m.nameEn + ' ' + m.summary + ' ' + m.formulaOrType).toLowerCase().includes(q);
+      });
+
+      const compared = state.comparedMaterialIds.map(id => ECO_MATERIALS.find(m => m.id === id)).filter(Boolean);
+
+      return `
+        <div class="section-gap">
+          <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div class="filter-bar">
+              ${Object.entries({ all: '전체 소재', water: '수질 정화', air: '대기·가스', energy: '에너지 저장', soil: '토양·탄소 격리' }).map(([k, lbl]) => `
+                <button type="button" class="filter-btn ${state.materialDomain===k && state.materialViewMode==='explore' ? 'active' : ''}" onclick="state.materialDomain='${k}'; state.materialViewMode='explore'; renderApp();">${lbl}</button>
+              `).join('')}
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <input type="search" class="input" style="width:200px;padding:6px 10px;" placeholder="소재명, 구조 검색..." value="${escapeHtml(state.materialSearch)}" oninput="state.materialSearch=this.value; renderMaterialsKeepFocus(this);" />
+              <div class="segmented">
+                <button type="button" class="seg-btn ${state.materialViewMode==='explore'?'active':''}" onclick="state.materialViewMode='explore'; renderApp();">소재 탐색</button>
+                <button type="button" class="seg-btn ${state.materialViewMode==='compare'?'active':''}" onclick="state.materialViewMode='compare'; renderApp();">소재 비교 (${compared.length})</button>
+              </div>
+            </div>
+          </div>
+
+          ${state.materialViewMode === 'explore' ? `
+            <div class="grid-3">
+              ${filtered.map(m => {
+                const inComp = state.comparedMaterialIds.includes(m.id);
+                return `
+                  <article class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;">
+                    <div>
+                      <div class="mat-visual">${renderMaterialSvg(m.svgType)}</div>
+                      <div style="padding:18px;">
+                        <div class="meta-text">${escapeHtml(m.nameEn)} · ${escapeHtml(m.formulaOrType)}</div>
+                        <h3 style="font-size:16px;font-weight:700;margin-top:4px;">${escapeHtml(m.nameKo)}</h3>
+                        <p style="font-size:12.5px;color:#475569;margin-top:8px;line-height:1.5;">${escapeHtml(m.summary)}</p>
+                        <div style="margin-top:14px;padding-top:10px;border-top:1px solid #F1F5F9;font-size:12px;display:flex;flex-direction:column;gap:4px;">
+                          <div style="display:flex;justify-content:space-between;"><span class="meta-text">비표면적</span><span class="mono">${escapeHtml(m.props.specificSurfaceArea)}</span></div>
+                          <div style="display:flex;justify-content:space-between;"><span class="meta-text">비용 수준</span><span>${escapeHtml(m.props.costTier)}</span></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div style="padding:0 18px 18px;display:flex;gap:8px;">
+                      <button type="button" class="btn btn-primary btn-sm" style="flex:1;" onclick="openMaterialDetail('${m.id}')">상세 정보 보기</button>
+                      <button type="button" class="btn btn-secondary btn-sm" style="${inComp ? 'border-color:#064E3B;background:#ECFDF5;color:#064E3B;' : ''}" onclick="toggleCompare('${m.id}')">${inComp ? '✓ 담김' : '+ 비교'}</button>
+                    </div>
+                  </article>
+                `;
+              }).join('')}
+            </div>
+
+            ${compared.length > 0 ? `
+              <div class="compare-tray">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;">
+                  <span style="color:#6EE7B7;font-weight:600;">비교 선택됨 (${compared.length}/4):</span>
+                  ${compared.map(m => `<button type="button" style="background:rgba(255,255,255,0.12);border:none;color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;" onclick="toggleCompare('${m.id}')">${escapeHtml(m.nameKo)} ×</button>`).join('')}
+                </div>
+                <button type="button" class="btn btn-emerald btn-sm" ${compared.length<2?'disabled':''} onclick="state.materialViewMode='compare'; renderApp();">
+                  ${compared.length < 2 ? '2개 이상 선택 시 비교 가능' : `${compared.length}종 조건별 비교하기 →`}
+                </button>
+              </div>
+            ` : ''}
+          ` : `
+            ${compared.length < 2 ? `
+              <div class="card" style="text-align:center;padding:40px;">
+                <div style="font-size:14px;font-weight:600;">비교하려면 최소 2개 이상의 소재를 선택해야 합니다.</div>
+                <button type="button" class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="state.materialViewMode='explore'; renderApp();">소재 목록으로 이동</button>
+              </div>
+            ` : `
+              <div class="card section-gap" style="gap:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                  <div>
+                    <h3 style="font-size:16px;font-weight:700;">활용 목적 및 조건별 소재 적합성 비교</h3>
+                    <p class="meta-text" style="margin-top:4px;">단일 소재의 절대적 우열이 아니라, 선택된 적용 목적과 공정 조건에 따라 적합성이 달라집니다.</p>
+                  </div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="saveMaterialComparisonToNotebook()">비교 결과 노트에 저장</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="askAiAboutComparedMaterials()">AI에게 심층 비교 질문</button>
+                  </div>
+                </div>
+                <div class="grid-5">
+                  ${Object.entries(MATERIAL_CONDITIONS).map(([k, info]) => `
+                    <button type="button" class="list-item ${state.activeCondition===k?'active':''}" style="padding:12px;" onclick="state.activeCondition='${k}'; renderApp();">
+                      <div style="font-size:12.5px;font-weight:600;">${info.label}</div>
+                      <div class="sub-text" style="font-size:11px;">${info.desc}</div>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="grid-${Math.min(compared.length, 4)}">
+                ${compared.map(m => {
+                  const prof = m.suitability[state.activeCondition];
+                  const badgeStyle = prof.fit === '적합' ? 'background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;' : prof.fit === '조건부 적합' ? 'background:#FFFBEB;color:#92400E;border:1px solid #FCD34D;' : 'background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;';
+                  return `
+                    <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;">
+                      <div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                          <strong style="font-size:14.5px;">${escapeHtml(m.nameKo)}</strong>
+                          <span style="padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;${badgeStyle}">${prof.fit}</span>
+                        </div>
+                        <p style="font-size:12.5px;color:#334155;margin-top:10px;line-height:1.6;">${escapeHtml(prof.rationale)}</p>
+                      </div>
+                      <button type="button" style="background:none;border:none;padding:0;margin-top:14px;text-align:left;font-size:11.5px;color:#94A3B8;" onclick="toggleCompare('${m.id}')">비교에서 제외</button>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width:160px;">비교 항목</th>
+                      ${compared.map(m => `<th>${escapeHtml(m.nameKo)} (${escapeHtml(m.nameEn)})</th>`).join('')}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><strong>구조/조성</strong></td>${compared.map(m => `<td>${escapeHtml(m.formulaOrType)}</td>`).join('')}</tr>
+                    <tr><td><strong>비표면적</strong></td>${compared.map(m => `<td class="mono">${escapeHtml(m.props.specificSurfaceArea)}</td>`).join('')}</tr>
+                    <tr><td><strong>기공 크기</strong></td>${compared.map(m => `<td class="mono">${escapeHtml(m.props.poreSize)}</td>`).join('')}</tr>
+                    <tr><td><strong>표면 화학</strong></td>${compared.map(m => `<td>${escapeHtml(m.props.surfaceChemistry)}</td>`).join('')}</tr>
+                    <tr><td><strong>열적 안정성</strong></td>${compared.map(m => `<td>${escapeHtml(m.props.thermalStability)}</td>`).join('')}</tr>
+                    <tr><td><strong>비용 · 재생성</strong></td>${compared.map(m => `<td>비용: ${escapeHtml(m.props.costTier)}<br/><span class="meta-text">재생: ${escapeHtml(m.props.regenerationEase)}</span></td>`).join('')}</tr>
+                    <tr><td><strong>핵심 한계</strong></td>${compared.map(m => `<td><ul style="margin:0 0 0 16px;padding:0;">${m.limitations.map(l=>`<li>${escapeHtml(l)}</li>`).join('')}</ul></td>`).join('')}</tr>
+                  </tbody>
+                </table>
+              </div>
+            `}
+          `}
+        </div>
+      `;
+    }
+
+    function renderMaterialsKeepFocus(inputEl) {
+      const pos = inputEl.selectionStart;
+      renderApp();
+      const el = document.querySelector('#app-content input[type="search"]');
+      if (el) { el.focus(); el.setSelectionRange(pos, pos); }
+    }
+
+    function toggleCompare(id) {
+      if (state.comparedMaterialIds.includes(id)) {
+        state.comparedMaterialIds = state.comparedMaterialIds.filter(x => x !== id);
+      } else if (state.comparedMaterialIds.length < 4) {
+        state.comparedMaterialIds.push(id);
+      } else {
+        showToast('최대 4개의 소재까지 동시에 비교할 수 있습니다.');
+      }
+      renderApp();
+    }
+
+    function openMaterialDetail(id) {
+      const m = ECO_MATERIALS.find(x => x.id === id);
+      if (!m) return;
+      document.getElementById('drawer-root').innerHTML = `
+        <div class="drawer-backdrop" onclick="if(event.target===this) closeDrawer()">
+          <div class="drawer-panel section-gap" style="gap:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #F1F5F9;padding-bottom:14px;">
+              <div>
+                <div style="font-size:12px;font-weight:600;color:#064E3B;">${escapeHtml(m.nameEn)} · ${escapeHtml(m.formulaOrType)}</div>
+                <h2 style="font-size:22px;font-weight:700;margin-top:4px;">${escapeHtml(m.nameKo)}</h2>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="closeDrawer()">닫기</button>
+            </div>
+            <div style="border-radius:10px;overflow:hidden;border:1px solid #E2E8F0;">${renderMaterialSvg(m.svgType)}</div>
+            <section><h4 style="font-size:14px;font-weight:700;">1. 소재의 정의와 구조</h4><p style="font-size:13.5px;color:#334155;margin-top:6px;line-height:1.7;">${escapeHtml(m.definitionAndStructure)}</p></section>
+            <section>
+              <h4 style="font-size:14px;font-weight:700;">2. 주요 과학적 특성</h4>
+              <div class="grid-2" style="margin-top:8px;">
+                <div class="card" style="padding:12px;background:#F8FAFC;"><div class="meta-text">비표면적</div><div class="mono" style="font-size:12.5px;font-weight:600;margin-top:4px;">${escapeHtml(m.props.specificSurfaceArea)}</div></div>
+                <div class="card" style="padding:12px;background:#F8FAFC;"><div class="meta-text">기공 크기</div><div class="mono" style="font-size:12.5px;font-weight:600;margin-top:4px;">${escapeHtml(m.props.poreSize)}</div></div>
+                <div class="card" style="padding:12px;background:#F8FAFC;"><div class="meta-text">열적 안정성</div><div style="font-size:12.5px;font-weight:600;margin-top:4px;">${escapeHtml(m.props.thermalStability)}</div></div>
+                <div class="card" style="padding:12px;background:#F8FAFC;"><div class="meta-text">표면 화학</div><div style="font-size:12.5px;font-weight:600;margin-top:4px;">${escapeHtml(m.props.surfaceChemistry)}</div></div>
+              </div>
+            </section>
+            <section><h4 style="font-size:14px;font-weight:700;">3. 물리적 · 화학적 특징</h4><ul style="margin:8px 0 0 18px;padding:0;font-size:13px;color:#334155;line-height:1.6;">${m.traits.map(t=>`<li>${escapeHtml(t)}</li>`).join('')}</ul></section>
+            <section>
+              <h4 style="font-size:14px;font-weight:700;">4. 환경 및 에너지 활용 사례</h4>
+              <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px;">
+                ${m.applications.map(a => `<div class="card" style="padding:12px;"><div style="font-size:12.5px;font-weight:600;color:#064E3B;">${escapeHtml(a.domain)}</div><p style="font-size:12.5px;color:#334155;margin-top:4px;">${escapeHtml(a.desc)}</p></div>`).join('')}
+              </div>
+            </section>
+            <section class="grid-2">
+              <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:8px;padding:12px;"><div style="font-size:12px;font-weight:700;color:#064E3B;">장점</div><ul style="margin:6px 0 0 16px;padding:0;font-size:12px;color:#064E3B;line-height:1.6;">${m.pros.map(p=>`<li>${escapeHtml(p)}</li>`).join('')}</ul></div>
+              <div style="background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:8px;padding:12px;"><div style="font-size:12px;font-weight:700;color:var(--amber-text);">한계</div><ul style="margin:6px 0 0 16px;padding:0;font-size:12px;color:var(--amber-text);line-height:1.6;">${m.limitations.map(l=>`<li>${escapeHtml(l)}</li>`).join('')}</ul></div>
+            </section>
+            <section><h4 style="font-size:14px;font-weight:700;">5. 관련 연구 및 참고 자료</h4><ul style="margin:6px 0 0 18px;padding:0;font-size:12px;color:#64748B;">${m.references.map(r=>`<li>${escapeHtml(r)}</li>`).join('')}</ul></section>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid #E2E8F0;">
+              <button type="button" class="btn btn-primary btn-sm" onclick="if(!state.comparedMaterialIds.includes('${m.id}')) toggleCompare('${m.id}'); closeDrawer(); state.materialViewMode='compare'; renderApp();">비교 화면으로 이동</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="state.aiQuery='${escapeHtml(m.nameKo)}의 과학적 원리를 바탕으로 환경 문제 해결에 활용할 아이디어와 한계를 설명해 주세요.'; closeDrawer(); navigateTo('ai-lab');">AI Solution Lab에 질문</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    function closeDrawer() { document.getElementById('drawer-root').innerHTML = ''; }
+
+    function askAiAboutComparedMaterials() {
+      const cond = MATERIAL_CONDITIONS[state.activeCondition];
+      const names = state.comparedMaterialIds.map(id => ECO_MATERIALS.find(m => m.id === id)?.nameKo).filter(Boolean).join(', ');
+      state.aiQuery = `"${cond.label}" 조건에서 ${names} 소재의 물리·화학적 특성 차이와 장단점, 실제 적용 시 고려해야 할 한계를 비교 분석해 주세요.`;
+      navigateTo('ai-lab');
+    }
+
+    // -------------------------------------------------------------------------
+    // MODULE 4: AI SOLUTION LAB
+    // -------------------------------------------------------------------------
+    function renderAiLab() {
+      const topic = ENVIRONMENT_TOPICS.find(t => t.id === state.activeTopicId);
+      const linkedMats = ECO_MATERIALS.filter(m => state.comparedMaterialIds.includes(m.id));
+      const isFileProto = window.location.protocol === 'file:';
+
+      return `
+        <div class="section-gap">
+          ${isFileProto ? `
+            <div class="banner banner-demo">
+              <div><strong>[로컬 파일 직접 실행 모드]</strong> 보안상 단일 HTML 파일(file://)에는 API 키를 포함하지 않으므로 실시간 AI 호출은 서버 환경(AI Studio 또는 백엔드 배포)에서 작동합니다.</div>
+            </div>
+          ` : ''}
+
+          <div class="card section-gap" style="gap:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+              <div>
+                <h2 style="font-size:16px;font-weight:700;">AI 기반 6단계 환경 문제 해결 분석</h2>
+                <p class="meta-text" style="margin-top:3px;">원인 분석 → 과학 원리 → 친환경 소재·기술 → 장단점 비교 → 한계 → 추가 실험 아이디어를 도출합니다.</p>
+              </div>
+              <div class="segmented">
+                <button type="button" class="seg-btn ${state.aiDifficulty==='high_school'?'active':''}" onclick="state.aiDifficulty='high_school'; renderApp();">고등학생 눈높이</button>
+                <button type="button" class="seg-btn ${state.aiDifficulty==='advanced'?'active':''}" onclick="state.aiDifficulty='advanced'; renderApp();">대학 심화 탐구</button>
+              </div>
+            </div>
+
+            ${(topic || state.dataSnapshot || linkedMats.length) ? `
+              <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px;font-size:12px;">
+                <div style="font-weight:600;color:#475569;margin-bottom:6px;">연계된 탐구 맥락</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                  ${topic ? `<span style="background:#fff;border:1px solid #E2E8F0;padding:4px 10px;border-radius:6px;">주제: ${escapeHtml(topic.title)} <button type="button" style="border:none;background:none;color:#94A3B8;" onclick="state.activeTopicId=null; renderApp();">×</button></span>` : ''}
+                  ${state.dataSnapshot ? `<span style="background:#fff;border:1px solid #E2E8F0;padding:4px 10px;border-radius:6px;">데이터: ${escapeHtml(state.dataSnapshot.datasetTitle)} <button type="button" style="border:none;background:none;color:#94A3B8;" onclick="state.dataSnapshot=null; renderApp();">×</button></span>` : ''}
+                  ${linkedMats.length ? `<span style="background:#fff;border:1px solid #E2E8F0;padding:4px 10px;border-radius:6px;">소재: ${linkedMats.map(m=>escapeHtml(m.nameKo)).join(', ')}</span>` : ''}
+                </div>
+              </div>
+            ` : ''}
+
+            <form onsubmit="event.preventDefault(); runAiSolution();" style="display:flex;flex-direction:column;gap:10px;">
+              <textarea id="ai-query-input" class="textarea" rows="3" placeholder="탐구하고 싶은 환경 문제나 친환경 소재 질문을 입력하세요..." oninput="state.aiQuery=this.value; state.aiValidationError=null;">${escapeHtml(state.aiQuery)}</textarea>
+              ${state.aiValidationError ? `<div style="font-size:12px;color:#DC2626;">${escapeHtml(state.aiValidationError)}</div>` : ''}
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <button type="button" class="filter-btn" onclick="state.aiQuery='수중 미세플라스틱 제거를 위해 활성탄, 바이오차, 그래핀 중 조건별로 어떤 소재를 선택해야 할까요?'; renderApp();">추천 질문 1</button>
+                  <button type="button" class="filter-btn" onclick="state.aiQuery='습도가 높은 산업 현장에서 VOCs를 효율적으로 포집하기 위한 제올라이트·실리카겔 활용 방안을 분석해 주세요.'; renderApp();">추천 질문 2</button>
+                  <button type="button" class="filter-btn" onclick="state.aiQuery='폐플라스틱 화학적 재활용에서 제올라이트 촉매의 역할과 실제 상용화 한계는 무엇인가요?'; renderApp();">추천 질문 3</button>
+                </div>
+                <button type="submit" class="btn btn-primary" ${state.aiStatus==='loading'?'disabled':''}>${state.aiStatus==='loading'?'6단계 분석 중...':'AI 분석 시작'}</button>
+              </div>
+            </form>
+          </div>
+
+          ${state.aiStatus === 'loading' ? `
+            <div class="card" style="padding:28px;text-align:center;">
+              <div style="font-size:14px;font-weight:600;color:#064E3B;">과학적 배경, 친환경 소재 적합성, 실험 아이디어를 6단계로 구조화하고 있습니다...</div>
+            </div>
+          ` : ''}
+
+          ${state.aiStatus === 'error' ? `
+            <div class="banner banner-error">
+              <div><strong>AI 분석 요청 실패:</strong> ${escapeHtml(state.aiError)}</div>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="runAiSolution()">다시 시도</button>
+            </div>
+          ` : ''}
+
+          ${state.aiStatus === 'success' && state.aiReport ? renderAiReportView(state.aiReport) : ''}
+        </div>
+      `;
+    }
+
+    function renderAiReportView(rep) {
+      return `
+        <div class="card section-gap" style="padding:26px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;border-bottom:1px solid #F1F5F9;padding-bottom:16px;">
+            <div>
+              <div class="meta-text">${rep.difficultyLevel === 'high_school' ? '고등학교 눈높이 설명' : '대학 심화 탐구'} · ${new Date(rep.createdAt).toLocaleString('ko-KR')}</div>
+              <h3 style="font-size:16px;font-weight:700;margin-top:4px;">${escapeHtml(rep.query)}</h3>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="saveAiReportToNotebook()">연구 노트에 저장</button>
+          </div>
+
+          <div class="grid-2">
+            <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:16px;">
+              <h4 style="font-size:13.5px;font-weight:700;color:#064E3B;">1. 문제의 원인과 과학적 배경 분석</h4>
+              <p style="font-size:13px;color:#334155;margin-top:8px;line-height:1.7;white-space:pre-line;">${escapeHtml(rep.sections.causeAndBackground)}</p>
+            </div>
+            <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:16px;">
+              <h4 style="font-size:13.5px;font-weight:700;color:#064E3B;">2. 관련 과학적 원리 설명</h4>
+              <p style="font-size:13px;color:#334155;margin-top:8px;line-height:1.7;white-space:pre-line;">${escapeHtml(rep.sections.scientificPrinciples)}</p>
+            </div>
+          </div>
+
+          ${rep.glossary && rep.glossary.length ? `
+            <div>
+              <h4 style="font-size:12.5px;font-weight:700;color:#475569;margin-bottom:8px;">핵심 과학 용어 쉽게 풀기</h4>
+              <div class="grid-3">${rep.glossary.map(g => `<div class="card" style="padding:12px;"><div style="font-size:12.5px;font-weight:700;">${escapeHtml(g.term)}</div><div style="font-size:12px;color:#475569;margin-top:4px;">${escapeHtml(g.explanation)}</div></div>`).join('')}</div>
+            </div>
+          ` : ''}
+
+          <div>
+            <h4 style="font-size:13.5px;font-weight:700;color:#064E3B;margin-bottom:10px;">3. 활용 가능한 친환경 소재 및 기술 제안</h4>
+            <div class="grid-2">${rep.sections.recommendedMaterialsAndTech.map(m => `<div class="card" style="padding:14px;"><div style="font-size:13.5px;font-weight:700;">${escapeHtml(m.name)}</div><p style="font-size:12.5px;color:#334155;margin-top:6px;line-height:1.6;">${escapeHtml(m.mechanism)}</p></div>`).join('')}</div>
+          </div>
+
+          <div>
+            <h4 style="font-size:13.5px;font-weight:700;color:#064E3B;margin-bottom:10px;">4. 해결 방안별 장점과 단점 비교</h4>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>해결 방안 / 소재</th><th>장점</th><th>단점 및 제약</th></tr></thead>
+                <tbody>
+                  ${rep.sections.prosAndConsComparison.map(r => `
+                    <tr>
+                      <td><strong>${escapeHtml(r.approach)}</strong></td>
+                      <td><ul style="margin:0 0 0 16px;padding:0;">${r.pros.map(p=>`<li>${escapeHtml(p)}</li>`).join('')}</ul></td>
+                      <td><ul style="margin:0 0 0 16px;padding:0;">${r.cons.map(c=>`<li>${escapeHtml(c)}</li>`).join('')}</ul></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card" style="padding:16px;"><h4 style="font-size:13.5px;font-weight:700;color:#064E3B;">5. 실제 적용 시 고려해야 할 한계</h4><ul style="margin:8px 0 0 18px;padding:0;font-size:13px;color:#334155;line-height:1.6;">${rep.sections.practicalLimitations.map(l=>`<li>${escapeHtml(l)}</li>`).join('')}</ul></div>
+            <div class="card" style="padding:16px;"><h4 style="font-size:13.5px;font-weight:700;color:#064E3B;">6. 추가 탐구 및 실험 아이디어 제안</h4><ul style="margin:8px 0 0 18px;padding:0;font-size:13px;color:#334155;line-height:1.6;">${rep.sections.furtherExperiments.map(e=>`<li>${escapeHtml(e)}</li>`).join('')}</ul></div>
+          </div>
+
+          <div style="background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:8px;padding:14px;">
+            <div style="font-size:12.5px;font-weight:700;color:var(--amber-text);">[추가 검증 필요] 확인되지 않은 사실 및 실험 검증 안내</div>
+            <ul style="margin:6px 0 0 18px;padding:0;font-size:12px;color:var(--amber-text);line-height:1.6;">
+              ${rep.verificationNeededNotes.map(n => `<li>${escapeHtml(n)}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    async function runAiSolution() {
+      const q = (state.aiQuery || '').trim();
+      if (q.length < 5) {
+        state.aiValidationError = '탐구 질문을 5자 이상 구체적으로 입력해 주세요.';
+        renderApp(); return;
+      }
+      if (window.location.protocol === 'file:') {
+        state.aiStatus = 'error';
+        state.aiError = '로컬 파일(file://) 직접 실행 환경에는 백엔드 API 서버가 없어 실시간 Gemini AI 호출을 실행할 수 없습니다. 환경 탐색, 데이터 분석(CSV 포함), 소재 비교, 연구 노트 기능은 모두 정상 작동합니다.';
+        renderApp(); return;
+      }
+      state.aiValidationError = null;
+      state.aiError = null;
+      state.aiStatus = 'loading';
+      renderApp();
+
+      const topic = ENVIRONMENT_TOPICS.find(t => t.id === state.activeTopicId);
+      const mats = ECO_MATERIALS.filter(m => state.comparedMaterialIds.includes(m.id));
+      try {
+        const res = await fetch('/api/ai/solution', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: q,
+            difficultyLevel: state.aiDifficulty,
+            context: {
+              topicTitle: topic ? topic.title : undefined,
+              topicSummary: topic ? topic.conceptAndCauses.slice(0, 300) : undefined,
+              datasetSummary: state.dataSnapshot ? `${state.dataSnapshot.datasetTitle} (${state.dataSnapshot.periodLabel})` : undefined,
+              materialNames: mats.map(m => `${m.nameKo}(${m.nameEn})`)
+            }
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'AI 응답 오류');
+        state.aiReport = {
+          id: 'ai_' + Date.now(),
+          createdAt: new Date().toISOString(),
+          query: q,
+          difficultyLevel: state.aiDifficulty,
+          sections: data.sections,
+          glossary: data.glossary || [],
+          verificationNeededNotes: data.verificationNeededNotes || []
+        };
+        state.aiStatus = 'success';
+      } catch (err) {
+        state.aiStatus = 'error';
+        state.aiError = '실시간 AI 서버와 연결되지 않았습니다. 정적 파일 호스팅(예: 백엔드 없는 Vercel 정적 배포 또는 file://)에서는 API 키 보호를 위해 클라이언트 단독 AI 호출을 수행하지 않습니다.';
+      }
+      renderApp();
+    }
+
+    // -------------------------------------------------------------------------
+    // MODULE 5: RESEARCH NOTEBOOK (localStorage CRUD + MARKDOWN EXPORT)
+    // -------------------------------------------------------------------------
+    function renderNotebook() {
+      const q = state.notebookSearch.trim().toLowerCase();
+      const filtered = state.projects.filter(p => {
+        if (state.notebookStatusFilter !== 'all' && p.status !== state.notebookStatusFilter) return false;
+        if (!q) return true;
+        return (p.title + ' ' + p.description + ' ' + p.entries.map(e => e.title + ' ' + e.content).join(' ')).toLowerCase().includes(q);
+      });
+      const active = filtered.find(p => p.id === state.activeProjectId) || filtered[0] || null;
+      const statusMap = { in_progress: '진행 중', completed: '탐구 완료', archived: '보관됨' };
+      const entryMap = { question_hypothesis: '탐구 질문 · 가설', data_analysis: '데이터 분석 기록', material_comparison: '소재 비교 기록', ai_solution: 'AI 솔루션', reflection_plan: '고찰 · 탐구 계획' };
+
+      return `
+        <div class="section-gap">
+          ${state.corruptedBackupRaw ? `
+            <div class="banner banner-demo">
+              <span>저장된 노트 JSON 형식이 손상되어 자동 초기화하지 않고 보존 중입니다.</span>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="localStorage.removeItem('${STORAGE_KEY}'); state.corruptedBackupRaw=null; renderApp();">저장소 초기화</button>
+            </div>
+          ` : ''}
+
+          <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;flex:1;">
+              <input type="search" class="input" style="max-width:280px;" placeholder="프로젝트 제목, 질문, 메모 검색..." value="${escapeHtml(state.notebookSearch)}" oninput="state.notebookSearch=this.value; renderNotebookKeepFocus(this);" />
+              <select class="select" style="width:auto;" onchange="state.notebookStatusFilter=this.value; renderApp();">
+                <option value="all" ${state.notebookStatusFilter==='all'?'selected':''}>모든 상태</option>
+                <option value="in_progress" ${state.notebookStatusFilter==='in_progress'?'selected':''}>진행 중</option>
+                <option value="completed" ${state.notebookStatusFilter==='completed'?'selected':''}>탐구 완료</option>
+                <option value="archived" ${state.notebookStatusFilter==='archived'?'selected':''}>보관됨</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="loadSampleProject()">예시 노트 추가</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="openNewProjectModal()">+ 새 연구 프로젝트</button>
+            </div>
+          </div>
+
+          ${state.projects.length === 0 ? `
+            <div class="card" style="text-align:center;padding:48px 20px;">
+              <div style="font-size:15px;font-weight:700;">아직 생성된 연구 프로젝트가 없습니다</div>
+              <p class="meta-text" style="margin-top:6px;">새 연구 프로젝트를 만들거나 다른 모듈에서 분석한 내용을 저장해 보세요.</p>
+              <div style="margin-top:16px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="openNewProjectModal()">첫 연구 프로젝트 만들기</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="loadSampleProject()">예시 프로젝트 불러오기</button>
+              </div>
+            </div>
+          ` : `
+            <div class="split-layout">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                ${filtered.map(p => `
+                  <button type="button" class="list-item ${active && active.id === p.id ? 'active' : ''}" onclick="state.activeProjectId='${p.id}'; state.editingProjectMeta=false; renderApp();">
+                    <div class="meta-text">${statusMap[p.status]} · ${p.categories.map(c=>ENV_CATEGORY_LABELS[c]).join(', ')}</div>
+                    <div style="font-size:14px;font-weight:600;margin-top:5px;">${escapeHtml(p.title)}</div>
+                    <div class="sub-text">${escapeHtml(p.description || '(설명 없음)')}</div>
+                    <div class="mono meta-text" style="margin-top:8px;">기록 ${p.entries.length}건 · ${new Date(p.updatedAt).toLocaleDateString('ko-KR')}</div>
+                  </button>
+                `).join('')}
+              </div>
+
+              ${active ? `
+                <div class="card section-gap" style="padding:24px;">
+                  <div style="border-bottom:1px solid #F1F5F9;padding-bottom:16px;">
+                    ${state.editingProjectMeta ? `
+                      <form onsubmit="event.preventDefault(); saveMetaEdit('${active.id}')" style="display:flex;flex-direction:column;gap:10px;">
+                        <input id="edit-meta-title" class="input" required value="${escapeHtml(active.title)}"/>
+                        <textarea id="edit-meta-desc" class="textarea" rows="2">${escapeHtml(active.description)}</textarea>
+                        <div style="display:flex;gap:8px;">
+                          <button type="submit" class="btn btn-primary btn-sm">저장</button>
+                          <button type="button" class="btn btn-secondary btn-sm" onclick="state.editingProjectMeta=false; renderApp();">취소</button>
+                        </div>
+                      </form>
+                    ` : `
+                      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+                        <div>
+                          <div style="font-size:12px;font-weight:600;color:#064E3B;">${active.categories.map(c=>ENV_CATEGORY_LABELS[c]).join(', ')} · ${statusMap[active.status]}</div>
+                          <h2 style="font-size:20px;font-weight:700;margin-top:6px;">${escapeHtml(active.title)}</h2>
+                          <p style="font-size:13.5px;color:#475569;margin-top:6px;">${escapeHtml(active.description || '설명이 없습니다.')}</p>
+                        </div>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                          <select class="select" style="width:auto;padding:5px 8px;font-size:12px;" onchange="changeProjectStatus('${active.id}', this.value)">
+                            <option value="in_progress" ${active.status==='in_progress'?'selected':''}>진행 중</option>
+                            <option value="completed" ${active.status==='completed'?'selected':''}>탐구 완료</option>
+                            <option value="archived" ${active.status==='archived'?'selected':''}>보관됨</option>
+                          </select>
+                          <button type="button" class="btn btn-secondary btn-sm" onclick="state.editingProjectMeta=true; renderApp();">수정</button>
+                          <button type="button" class="btn btn-secondary btn-sm" onclick="exportProjectMd('${active.id}')">MD 내보내기</button>
+                          <button type="button" class="btn btn-secondary btn-sm" style="color:#DC2626;" onclick="confirmDeleteProject('${active.id}')">삭제</button>
+                        </div>
+                      </div>
+                    `}
+                  </div>
+
+                  <div>
+                    ${!state.showNewEntryForm ? `
+                      <button type="button" style="width:100%;border:1px dashed #CBD5E1;background:#F8FAFC;border-radius:8px;padding:12px;font-size:12.5px;font-weight:600;color:#334155;" onclick="state.showNewEntryForm=true; renderApp();">+ 탐구 질문, 가설 또는 추가 탐구 계획 작성하기</button>
+                    ` : `
+                      <form onsubmit="event.preventDefault(); addNewEntry('${active.id}')" style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+                        <select id="new-entry-type" class="select" style="width:auto;">
+                          <option value="question_hypothesis">탐구 질문 · 가설</option>
+                          <option value="reflection_plan">개인 고찰 · 추가 탐구 계획</option>
+                        </select>
+                        <input id="new-entry-title" class="input" required placeholder="기록 제목 (예: 바이오차 흡착 실험 계획)"/>
+                        <textarea id="new-entry-content" class="textarea" rows="3" required placeholder="개인적인 생각, 가설, 관찰 내용을 작성하세요..."></textarea>
+                        <textarea id="new-entry-checklist" class="textarea" rows="2" placeholder="체크리스트 (선택 · 줄바꿈으로 항목 구분)"></textarea>
+                        <div style="display:flex;justify-content:flex-end;gap:8px;">
+                          <button type="button" class="btn btn-secondary btn-sm" onclick="state.showNewEntryForm=false; renderApp();">취소</button>
+                          <button type="submit" class="btn btn-primary btn-sm">기록 저장</button>
+                        </div>
+                      </form>
+                    `}
+                  </div>
+
+                  ${active.entries.length === 0 ? `
+                    <div style="text-align:center;padding:24px;color:#64748B;font-size:12.5px;">아직 저장된 기록이 없습니다.</div>
+                  ` : `
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                      ${active.entries.map(ent => state.editingEntryId === ent.id ? `
+                        <div class="card" style="padding:14px;display:flex;flex-direction:column;gap:8px;">
+                          <input id="edit-ent-title-${ent.id}" class="input" value="${escapeHtml(ent.title)}"/>
+                          <textarea id="edit-ent-content-${ent.id}" class="textarea" rows="4">${escapeHtml(ent.content)}</textarea>
+                          <div style="display:flex;justify-content:flex-end;gap:8px;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="state.editingEntryId=null; renderApp();">취소</button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="saveEntryEdit('${active.id}', '${ent.id}')">수정 완료</button>
+                          </div>
+                        </div>
+                      ` : `
+                        <div class="card" style="padding:16px;">
+                          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+                            <div>
+                              <div class="meta-text" style="color:#064E3B;font-weight:600;">${entryMap[ent.type] || '연구 기록'} · <span class="mono" style="color:#94A3B8;font-weight:400;">${new Date(ent.updatedAt).toLocaleString('ko-KR')}</span></div>
+                              <h4 style="font-size:14px;font-weight:700;margin-top:4px;">${escapeHtml(ent.title)}</h4>
+                            </div>
+                            <div style="display:flex;gap:6px;">
+                              <button type="button" class="btn btn-secondary btn-sm" onclick="state.editingEntryId='${ent.id}'; renderApp();">수정</button>
+                              <button type="button" class="btn btn-secondary btn-sm" style="color:#DC2626;" onclick="confirmDeleteEntry('${active.id}', '${ent.id}')">삭제</button>
+                            </div>
+                          </div>
+                          <p style="font-size:13px;color:#334155;margin-top:10px;line-height:1.7;white-space:pre-line;">${escapeHtml(ent.content)}</p>
+                          ${ent.checklist && ent.checklist.length ? `
+                            <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F1F5F9;display:flex;flex-direction:column;gap:6px;">
+                              <div style="font-size:11.5px;font-weight:600;color:#475569;">실행 체크리스트</div>
+                              ${ent.checklist.map(c => `
+                                <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;${c.done?'text-decoration:line-through;color:#94A3B8;':''}">
+                                  <input type="checkbox" ${c.done?'checked':''} onchange="toggleChecklist('${active.id}','${ent.id}','${c.id}')"/>
+                                  <span>${escapeHtml(c.text)}</span>
+                                </label>
+                              `).join('')}
+                            </div>
+                          ` : ''}
+                        </div>
+                      `).join('')}
+                    </div>
+                  `}
+                </div>
+              ` : ''}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function renderNotebookKeepFocus(inputEl) {
+      const pos = inputEl.selectionStart;
+      renderApp();
+      const el = document.querySelector('#app-content input[type="search"]');
+      if (el) { el.focus(); el.setSelectionRange(pos, pos); }
+    }
+
+    // Notebook Actions & Modals
+    function loadSampleProject() {
+      const now = new Date().toISOString();
+      const sample = {
+        id: 'proj_sample_' + Date.now(),
+        title: '[예시 프로젝트] 수계 미세플라스틱 제거용 다공성 탄소 소재 비교',
+        description: 'EcoLab 탐구 흐름을 체험할 수 있는 샘플 연구 노트입니다.',
+        categories: ['water', 'waste'],
+        status: 'in_progress',
+        createdAt: now,
+        updatedAt: now,
+        entries: [
+          {
+            id: 'ent_s1',
+            type: 'question_hypothesis',
+            title: '핵심 탐구 질문 및 초기 가설',
+            content: '탐구 질문: 소규모 정수 처리 시설에서 미세플라스틱과 용존 유기물을 함께 줄이려면 그래핀과 바이오차·활성탄 중 어떤 조합이 현실적일까?\n가설: 대규모 현장 여과에서는 비용과 회수 효율 면에서 바이오차 또는 활성탄이 유리할 것이다.',
+            createdAt: now, updatedAt: now
+          },
+          {
+            id: 'ent_s2',
+            type: 'reflection_plan',
+            title: '추가 실험 계획',
+            content: '입도별 모의 현탁액 여과 속도 및 탁도 감소율 측정 비교.',
+            checklist: [
+              { id: 'c1', text: '활성탄 vs 바이오차 동량 세척 및 건조', done: true },
+              { id: 'c2', text: '여과 전후 탁도 3회 반복 측정', done: false }
+            ],
+            createdAt: now, updatedAt: now
+          }
+        ]
+      };
+      state.projects.unshift(sample);
+      state.activeProjectId = sample.id;
+      saveProjectsToStorage();
+      renderApp();
+    }
+
+    function openNewProjectModal() {
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+          <div class="modal-box">
+            <h3 style="font-size:16px;font-weight:700;">새 연구 프로젝트 생성</h3>
+            <form onsubmit="event.preventDefault(); createProjectFromModal()" style="margin-top:16px;display:flex;flex-direction:column;gap:12px;">
+              <div><label class="meta-text">프로젝트 제목</label><input id="np-title" class="input" required placeholder="예: 도시 미세먼지 저감 소재 탐구" style="margin-top:4px;"/></div>
+              <div>
+                <label class="meta-text">주요 환경 분야</label>
+                <select id="np-cat" class="select" style="margin-top:4px;">
+                  ${Object.entries(ENV_CATEGORY_LABELS).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}
+                </select>
+              </div>
+              <div><label class="meta-text">설명</label><textarea id="np-desc" class="textarea" rows="3" style="margin-top:4px;" placeholder="탐구 목표와 배경을 입력하세요."></textarea></div>
+              <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal()">취소</button>
+                <button type="submit" class="btn btn-primary btn-sm">생성하기</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function createProjectFromModal() {
+      const title = document.getElementById('np-title').value.trim();
+      const cat = document.getElementById('np-cat').value;
+      const desc = document.getElementById('np-desc').value.trim();
+      if (!title) return;
+      const now = new Date().toISOString();
+      const proj = { id: 'proj_' + Date.now(), title, description: desc, categories: [cat], status: 'in_progress', entries: [], createdAt: now, updatedAt: now };
+      state.projects.unshift(proj);
+      state.activeProjectId = proj.id;
+      saveProjectsToStorage();
+      closeModal();
+      renderApp();
+    }
+
+    function saveMetaEdit(projId) {
+      const proj = state.projects.find(p => p.id === projId);
+      if (!proj) return;
+      proj.title = document.getElementById('edit-meta-title').value.trim() || proj.title;
+      proj.description = document.getElementById('edit-meta-desc').value.trim();
+      proj.updatedAt = new Date().toISOString();
+      state.editingProjectMeta = false;
+      saveProjectsToStorage();
+      renderApp();
+    }
+
+    function changeProjectStatus(projId, status) {
+      const proj = state.projects.find(p => p.id === projId);
+      if (!proj) return;
+      proj.status = status;
+      proj.updatedAt = new Date().toISOString();
+      saveProjectsToStorage();
+      renderApp();
+    }
+
+    function addNewEntry(projId) {
+      const proj = state.projects.find(p => p.id === projId);
+      if (!proj) return;
+      const type = document.getElementById('new-entry-type').value;
+      const title = document.getElementById('new-entry-title').value.trim();
+      const content = document.getElementById('new-entry-content').value.trim();
+      const chkLines = document.getElementById('new-entry-checklist').value.split('\n').map(s=>s.trim()).filter(Boolean);
+      const now = new Date().toISOString();
+      proj.entries.unshift({
+        id: 'ent_' + Date.now(),
+        type, title, content,
+        checklist: chkLines.length ? chkLines.map((t, i) => ({ id: 'c_' + Date.now() + '_' + i, text: t, done: false })) : undefined,
+        createdAt: now, updatedAt: now
+      });
+      proj.updatedAt = now;
+      state.showNewEntryForm = false;
+      saveProjectsToStorage();
+      renderApp();
+    }
+
+    function saveEntryEdit(projId, entId) {
+      const proj = state.projects.find(p => p.id === projId);
+      if (!proj) return;
+      const ent = proj.entries.find(e => e.id === entId);
+      if (!ent) return;
+      ent.title = document.getElementById('edit-ent-title-' + entId).value.trim() || ent.title;
+      ent.content = document.getElementById('edit-ent-content-' + entId).value.trim();
+      ent.updatedAt = new Date().toISOString();
+      proj.updatedAt = ent.updatedAt;
+      state.editingEntryId = null;
+      saveProjectsToStorage();
+      renderApp();
+    }
+
+    function toggleChecklist(projId, entId, chkId) {
+      const proj = state.projects.find(p => p.id === projId);
+      const ent = proj?.entries.find(e => e.id === entId);
+      const chk = ent?.checklist?.find(c => c.id === chkId);
+      if (!chk) return;
+      chk.done = !chk.done;
+      proj.updatedAt = new Date().toISOString();
+      saveProjectsToStorage();
+      renderApp();
+    }
+
+    function confirmDeleteProject(projId) {
+      const proj = state.projects.find(p => p.id === projId);
+      if (!proj) return;
+      openConfirmModal('연구 프로젝트 삭제', `"${proj.title}" 프로젝트와 내부 기록 ${proj.entries.length}건을 삭제합니다. 이 작업은 되돌릴 수 없습니다.`, () => {
+        state.projects = state.projects.filter(p => p.id !== projId);
+        state.activeProjectId = state.projects[0]?.id || null;
+        saveProjectsToStorage();
+        renderApp();
+      });
+    }
+
+    function confirmDeleteEntry(projId, entId) {
+      const proj = state.projects.find(p => p.id === projId);
+      const ent = proj?.entries.find(e => e.id === entId);
+      if (!ent) return;
+      openConfirmModal('연구 기록 삭제', `"${ent.title}" 기록을 삭제하시겠습니까?`, () => {
+        proj.entries = proj.entries.filter(e => e.id !== entId);
+        proj.updatedAt = new Date().toISOString();
+        saveProjectsToStorage();
+        renderApp();
+      });
+    }
+
+    function openConfirmModal(title, desc, onConfirm) {
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+          <div class="modal-box">
+            <h3 style="font-size:16px;font-weight:700;">${escapeHtml(title)}</h3>
+            <p style="font-size:13.5px;color:#475569;margin-top:10px;line-height:1.6;">${escapeHtml(desc)}</p>
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal()">취소</button>
+              <button type="button" id="confirm-ok-btn" class="btn btn-danger btn-sm">삭제 확인</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('confirm-ok-btn').onclick = () => { closeModal(); onConfirm(); };
+    }
+
+    function exportProjectMd(projId) {
+      const proj = state.projects.find(p => p.id === projId);
+      if (!proj) return;
+      const lines = [`# ${proj.title}`, '', `- 수정일: ${new Date(proj.updatedAt).toLocaleString('ko-KR')}`, '', proj.description || '', '', '---', ''];
+      proj.entries.forEach((e, i) => {
+        lines.push(`## ${i+1}. ${e.title}`, '', e.content);
+        if (e.checklist) { lines.push(''); e.checklist.forEach(c => lines.push(`- [${c.done?'x':' '}] ${c.text}`)); }
+        lines.push('');
+      });
+      const blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = proj.title.replace(/[^\w가-힣-]+/g, '_') + '.md'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // -------------------------------------------------------------------------
+    // CROSS-MODULE SAVE TO NOTEBOOK MODAL
+    // -------------------------------------------------------------------------
+    function openSaveEntryModal(entryObj, suggestedTitle, suggestedCat) {
+      const hasExisting = state.projects.length > 0;
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+          <div class="modal-box">
+            <h3 style="font-size:16px;font-weight:700;">Research Notebook에 저장</h3>
+            <p class="meta-text" style="margin-top:4px;">${escapeHtml(entryObj.title)}</p>
+            <form id="save-entry-form" style="margin-top:16px;display:flex;flex-direction:column;gap:12px;">
+              ${hasExisting ? `
+                <div>
+                  <label class="meta-text">저장할 프로젝트 선택</label>
+                  <select id="save-target-proj" class="select" style="margin-top:4px;" onchange="document.getElementById('save-new-fields').style.display = this.value==='new' ? 'flex' : 'none';">
+                    ${state.projects.map(p => `<option value="${p.id}" ${p.id===state.activeProjectId?'selected':''}>${escapeHtml(p.title)} (${p.entries.length}건)</option>`).join('')}
+                    <option value="new">+ 새 연구 프로젝트로 생성</option>
+                  </select>
+                </div>
+              ` : `<input type="hidden" id="save-target-proj" value="new"/>`}
+              <div id="save-new-fields" style="display:${hasExisting ? 'none' : 'flex'};flex-direction:column;gap:10px;">
+                <div><label class="meta-text">새 프로젝트 제목</label><input id="save-new-title" class="input" value="${escapeHtml(suggestedTitle)}" style="margin-top:4px;"/></div>
+                <div>
+                  <label class="meta-text">환경 분야</label>
+                  <select id="save-new-cat" class="select" style="margin-top:4px;">
+                    ${Object.entries(ENV_CATEGORY_LABELS).map(([k,v]) => `<option value="${k}" ${k===suggestedCat?'selected':''}>${v}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal()">취소</button>
+                <button type="submit" class="btn btn-primary btn-sm">저장하기</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      document.getElementById('save-entry-form').onsubmit = e => {
+        e.preventDefault();
+        const target = document.getElementById('save-target-proj').value;
+        const now = new Date().toISOString();
+        const newEnt = { ...entryObj, id: 'ent_' + Date.now(), createdAt: now, updatedAt: now };
+        if (target === 'new') {
+          const t = document.getElementById('save-new-title').value.trim() || suggestedTitle;
+          const c = document.getElementById('save-new-cat').value;
+          const proj = { id: 'proj_' + Date.now(), title: t, description: 'EcoLab 탐구 과정에서 스크랩한 노트입니다.', categories: [c], status: 'in_progress', entries: [newEnt], createdAt: now, updatedAt: now };
+          state.projects.unshift(proj);
+          state.activeProjectId = proj.id;
+        } else {
+          const proj = state.projects.find(p => p.id === target);
+          if (proj) { proj.entries.unshift(newEnt); proj.updatedAt = now; state.activeProjectId = proj.id; }
+        }
+        saveProjectsToStorage();
+        closeModal();
+        renderShell();
+        showToast('Research Notebook에 저장되었습니다.', '노트 보기', () => navigateTo('notebook'));
+      };
+    }
+
+    function saveTopicToNotebook(topicId) {
+      const t = ENVIRONMENT_TOPICS.find(x => x.id === topicId);
+      if (!t) return;
+      const content = [
+        `분야: ${ENV_CATEGORY_LABELS[t.category]}`, '',
+        '[개념 및 발생 원인]', t.conceptAndCauses, '',
+        '[핵심 과학 원리]', ...t.scientificPrinciples.map(p => `- ${p.title}: ${p.description}`), '',
+        '[추가 탐구 질문]', ...t.inquiryQuestions.map(q => `- ${q}`)
+      ].join('\n');
+      openSaveEntryModal({ type: 'question_hypothesis', title: `[환경 주제] ${t.title}`, content }, `${t.title} 탐구`, t.category);
+    }
+
+    function saveDataToNotebook() {
+      const ctx = getDataLabContext();
+      const stats = calculateStats(ctx.points);
+      const period = `${ctx.points[0].label} ~ ${ctx.points[ctx.points.length - 1].label}`;
+      const lines = [
+        `출처 구분: ${ctx.reliability === 'sample_demo' ? '[예시 데이터]' : ctx.reliability === 'user_csv' ? '[사용자 CSV]' : '[정적 참고 데이터]'} ${ctx.sourceName}`,
+        `분석 구간: ${period} (${stats.count}개 지점)`,
+        `평균: ${fmtNum(stats.mean)} ${ctx.unit} | 최댓값: ${fmtNum(stats.max.value)} (${stats.max.label}) | 최솟값: ${fmtNum(stats.min.value)} (${stats.min.label})`,
+        `변화율: ${stats.changeRatePercent === null ? '기준값 0' : (stats.changeRatePercent>=0?'+':'') + stats.changeRatePercent.toFixed(1) + '%'}`
+      ];
+      if (state.dataAiResult) lines.push('', '[AI 경향 해석]', state.dataAiResult.summary, state.dataAiResult.trendInterpretation);
+      openSaveEntryModal({ type: 'data_analysis', title: `[데이터 분석] ${ctx.title}`, content: lines.join('\n') }, `${ctx.title} 데이터 분석`, 'climate');
+    }
+
+    function saveMaterialComparisonToNotebook() {
+      const compared = state.comparedMaterialIds.map(id => ECO_MATERIALS.find(m => m.id === id)).filter(Boolean);
+      const cond = MATERIAL_CONDITIONS[state.activeCondition];
+      const lines = [
+        `비교 조건: ${cond.label}`, '',
+        ...compared.map(m => `[${m.nameKo}] 적합성: ${m.suitability[state.activeCondition].fit}\n- 비표면적: ${m.props.specificSurfaceArea}\n- 판단 근거: ${m.suitability[state.activeCondition].rationale}`)
+      ];
+      openSaveEntryModal({ type: 'material_comparison', title: `[소재 비교] ${compared.map(m=>m.nameKo).join(' · ')}`, content: lines.join('\n') }, `${compared.map(m=>m.nameKo).join(' vs ')} 소재 비교`, 'water');
+    }
+
+    function saveAiReportToNotebook() {
+      const rep = state.aiReport;
+      if (!rep) return;
+      const lines = [
+        `질문: ${rep.query}`, '',
+        '1. 원인 및 배경', rep.sections.causeAndBackground, '',
+        '2. 과학 원리', rep.sections.scientificPrinciples, '',
+        '3. 친환경 소재 및 기술', ...rep.sections.recommendedMaterialsAndTech.map(m => `- ${m.name}: ${m.mechanism}`), '',
+        '4. 적용 한계', ...rep.sections.practicalLimitations.map(l => `- ${l}`), '',
+        '5. 추가 실험 아이디어', ...rep.sections.furtherExperiments.map(e => `- ${e}`), '',
+        '[추가 검증 필요]', ...rep.verificationNeededNotes.map(n => `- ${n}`)
+      ];
+      openSaveEntryModal({ type: 'ai_solution', title: `[AI 솔루션] ${rep.query.slice(0, 40)}`, content: lines.join('\n') }, `AI 탐구: ${rep.query.slice(0, 30)}`, 'water');
+    }
+
+    function downloadStandaloneIndexHtml() {
+      const clone = document.documentElement.cloneNode(true);
+      clone.querySelectorAll('script').forEach(sc => {
+        const src = sc.getAttribute('src') || '';
+        if (src.includes('@vite') || src.includes('/vite/')) sc.remove();
+      });
+      ['sidebar-nav', 'sidebar-context', 'app-content', 'mobile-bottom-nav', 'modal-root', 'drawer-root', 'toast-root'].forEach(id => {
+        const el = clone.querySelector('#' + id);
+        if (el) el.innerHTML = '';
+      });
+      const sb = clone.querySelector('#sidebar');
+      if (sb) sb.classList.remove('mobile-open');
+      const tbTitle = clone.querySelector('#topbar-title');
+      if (tbTitle) tbTitle.textContent = '홈 대시보드';
+      const tbSub = clone.querySelector('#topbar-sub');
+      if (tbSub) tbSub.textContent = '· Home';
+      const tbCta = clone.querySelector('#topbar-cta');
+      if (tbCta) tbCta.textContent = 'AI 해결 연구실 열기';
+
+      const html = '<!doctype html>\n' + clone.outerHTML;
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'index.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('GitHub 업로드용 index.html 파일이 다운로드되었습니다.');
+    }
+
+    function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
+
+    // =========================================================================
+    // 7. MAIN RENDER LOOP
+    // =========================================================================
+    function renderApp() {
+      renderShell();
+      const root = document.getElementById('app-content');
+      if (state.activeModule === 'home') root.innerHTML = renderHome();
+      else if (state.activeModule === 'explorer') root.innerHTML = renderExplorer();
+      else if (state.activeModule === 'data-lab') root.innerHTML = renderDataLab();
+      else if (state.activeModule === 'materials') root.innerHTML = renderMaterials();
+      else if (state.activeModule === 'ai-lab') root.innerHTML = renderAiLab();
+      else if (state.activeModule === 'notebook') root.innerHTML = renderNotebook();
+    }
+
+    loadProjectsFromStorage();
+    renderApp();
+  </script>
+
+
+</body><whale-quicksearch translate="no" style="visibility: visible;"></whale-quicksearch></html>
